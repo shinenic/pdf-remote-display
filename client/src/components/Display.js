@@ -20,7 +20,6 @@ class App extends Component {
 
   handleDocumentLoadSuccess (pdf) {
     this.setState({ numPages: pdf.numPages })
-    console.log(pdf)
   }
 
   handleOnClick() {
