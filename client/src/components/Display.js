@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import {
   getViewport,
   RENDER_SIZE_BY_HEIGHT,
-  RENDER_SIZE_BY_WIDTH
+  // RENDER_SIZE_BY_WIDTH
 } from '../utils/base'
 
 import { pdfjsWorkerSrc, samepleFile } from '../config'
@@ -24,33 +24,34 @@ const MainDiv = styled.div`
   }
 `
 
+// TODO: Render pdf canvas according to width or height
+// TODO: Add float buttun on top side (which can link to home page)
+
 class App extends Component {
   state = {
-    numPages: null,
+    pageCount: null,
     pageNumber: 1,
     pdfDisplayMode: RENDER_SIZE_BY_HEIGHT // RENDER_SIZE_BY_WIDTH
   }
 
   handleDocumentLoadSuccess (pdf) {
-    this.setState({ numPages: pdf.numPages })
+    this.setState({ pageCount: pdf.numPages })
   }
 
   handleOnClick() {
-    const { numPages, pageNumber } = this.state
-    if(numPages === 1) return null
+    const { pageCount, pageNumber } = this.state
+    if(pageCount === 1) return null
     this.setState({
-      pageNumber: numPages === pageNumber ? 1 : pageNumber + 1
+      pageNumber: pageCount === pageNumber ? 1 : pageNumber + 1
     })
   }
 
   render() {
-    const { pageNumber, numPages } = this.state
+    const { pageNumber } = this.state
     const viewport = getViewport()
-    console.log(viewport.height, viewport.width)
 
     return (
       <MainDiv onClick={() => this.handleOnClick()}>
-        {/* onClick={() => this.handleOnClick()} */}
         <Document
           file={samepleFile}
           className='pdf-container'
@@ -61,7 +62,6 @@ class App extends Component {
             renderAnnotationLayer={false}
             renderTextLayer={false}/>
         </Document>
-        {/* <p>Page {pageNumber} of {numPages}</p> */}
       </MainDiv>
     )
   }
