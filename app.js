@@ -32,7 +32,7 @@ app.get('/pdf', (req, res) => {
 })
 
 app.get('/download', (req, res) => {
-  const file = fs.readFileSync('./pdfs/歌譜/台語/心情.pdf')
+  const file = fs.readFileSync('./pdfs/歌譜/卓著-最新排行榜/ln012/情非得已_周華健(012_137).pdf')
   res.contentType("application/pdf")
   res.send(file)
 })
