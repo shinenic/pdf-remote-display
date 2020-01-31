@@ -10,17 +10,18 @@ const directoryPath = path.join(__dirname, '/../pdfs/')
 
 const getLastIndexValue = fileList => {
   const length = fileList.length
-  if(length === 0) return -1
+  if (length === 0) return -1
   return fileList[length - 1].index
 }
 
 const getLastArrayIndex = fileList => {
   const length = fileList.length
-  if(length === 0) return -1
+  if (length === 0) return -1
   return fileList[length - 1][0]
 }
 
 const walkSync = (dir, _fileList) => {
+  console.log('123')
   let fileList = _fileList || []
   const files = fs.readdirSync(dir)
   files.forEach(file => {
@@ -49,5 +50,7 @@ const walkSync = (dir, _fileList) => {
   return fileList
 }
 
-fs.writeFileSync('./fileList.txt', JSON.stringify(walkSync(directoryPath)))
-// module.exports =  walkSync(directoryPath)
+// fs.writeFileSync('./fileList.txt', JSON.stringify(walkSync(directoryPath)))
+module.exports = walkSync
+
+// module.exports = walkSync(directoryPath)

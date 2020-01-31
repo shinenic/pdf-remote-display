@@ -4,8 +4,12 @@ const logfmt = require("logfmt")
 const path = require('path')
 const cors = require('cors')
 const fs = require('fs')
+const getFileList = require('./src/getFileList')
 
-const fileList = require('./src/getFileList')
+const directoryPath = path.join(__dirname, '/pdfs/')
+let fileList = getFileList(directoryPath)
+console.log(fileList)
+
 // 到時候不用傳全部KEY給CLIENT
 const PORT = 5005
 // const songSearchAPIRouter = require('./router/api')
@@ -36,6 +40,21 @@ app.get('/download', (req, res) => {
   res.contentType("application/pdf")
   res.send(file)
 })
+
+app.get('/reloadfilelist', (req, res) => {
+  fileList = getFileList(directoryPath)
+  res.json({ message: 'File list update successed.' })
+})
+
+app.get('/filelist', (req, res) => {
+  const FileListWithoutPath = fileList.map((file) => {
+    const fileWithoutPath = Object.assign({}, file)
+    delete fileWithoutPath.path
+    return fileWithoutPath
+  })
+  res.json(FileListWithoutPath)
+})
+
 
 // API ROUTER
 // app.use(express.static(path.join(__dirname, '/../simple-song-search/build')))

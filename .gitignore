@@ -26,3 +26,4 @@ yarn-error.log*
 
 # pdf files
 /pdfs
+fileList.txt
