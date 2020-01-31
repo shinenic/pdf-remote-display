@@ -12,7 +12,3 @@ export const isZhuyin = str => {
   const zhuyin = /[\u3105-\u3129\u02CA\u02C7\u02CB\u02D9]/
   return zhuyin.test(str)
 }
-
-export const RENDER_SIZE_BY_HEIGHT = 'renderSizeByHeight'
-
-export const RENDER_SIZE_BY_WIDTH = 'renderSizeByWidth'
