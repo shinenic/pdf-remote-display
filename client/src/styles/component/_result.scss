@@ -18,6 +18,10 @@
     grid-template-columns:0.65fr 0.35fr;
     grid-template-areas:"fileName fileFolder";
   }
+
+  &--selected {
+    color: map-get($text-color, resultSelected);
+  }
 }
 
 %resultGrid {

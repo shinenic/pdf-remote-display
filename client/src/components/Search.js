@@ -30,7 +30,8 @@ class Search extends Component {
       incognito: false,
       searchMode: null,
       data: [],
-      ws: null
+      ws: null,
+      selectedIndex: -1
     }
   }
 
@@ -78,23 +79,15 @@ class Search extends Component {
   }
 
   connectWebSocket() {
-    this.setState({
-      ws: webSocket(api.webSocket)
-    }, () => {
-      console.log('success connect!')
-      //對 getMessage 設定監聽，如果 server 有透過 getMessage 傳送訊息，將會在此被捕捉
-      this.state.ws.on('getPDFFile', (message) => {
-        console.log(message)
-        alert(message)
+    this.setState({ ws: webSocket(api.webSocket) }, () => {
+      this.state.ws.on('getPDFFile', index => {
+        this.setState({ selectedIndex: index })
       })
     })
   }
 
   sendFileIndex(index) {
-    //以 emit 送訊息，並以 getMessage 為名稱送給 server 捕捉
-    this.state.ws.emit('getPDFFile', index, res => {
-      console.log(res)
-    })
+    this.state.ws.emit('getPDFFile', index)
   }
 
   // TODO: When scroll down to specific position, it will show a icon and auto scroll to top after clicked
@@ -184,7 +177,7 @@ class Search extends Component {
   }
 
   renderResult() {
-    const { result, currentCount, searchMode } = this.state
+    const { result, currentCount, searchMode, selectedIndex } = this.state
     const view = result.slice(0, currentCount).map((data, index) => {
       switch (searchMode) {
         case SEARCH_MODE_TYPE.FILE_LIST:
@@ -192,6 +185,7 @@ class Search extends Component {
             <FileListResult
               key={index}
               data={data}
+              selected={data.index === selectedIndex}
               sendFileIndex={index => this.sendFileIndex(index)} />
           )
         case SEARCH_MODE_TYPE.SONG_LIST:

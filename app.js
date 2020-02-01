@@ -31,8 +31,6 @@ app.get('/', (req, res) => {
 
 app.get('/pdf', (req, res) => {
   const path = fileList[req.query.index].path
-  // res.send('path = ' + path)
-  // res.send('path = ' + req.params.path)
   const file = fs.readFileSync(path)
   res.contentType("application/pdf")
   res.send(file)
@@ -76,13 +74,9 @@ const server = http.Server(app).listen(port, () => {
 
 const io = socket(server)
 
-//監聽 Server 連線後的所有事件，並捕捉事件 socket 執行
 io.on('connection', socket => {
-  //經過連線後在 console 中印出訊息
   console.log('success connect!')
-  //監聽透過 connection 傳進來的事件
-  socket.on('getPDFFile', message => {
-    const fileIndex = message
+  socket.on('getPDFFile', fileIndex => {
     io.sockets.emit('getPDFFile', fileIndex)
   })
 })

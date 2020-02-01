@@ -1,7 +1,11 @@
 import React from 'react'
 import DoubleTap from './common/doubleTap'
 
-const FileListResult = ({ data: { name: fileName, locatedFolder, index }, sendFileIndex }) => {
+const FileListResult = ({
+  data: { name: fileName, locatedFolder, index },
+  sendFileIndex,
+  selected
+}) => {
 
   const getYTSearchKeywork = fileName => {
     const strWithoutBlank = fileName.replace(/\s/g, '')
@@ -18,8 +22,9 @@ const FileListResult = ({ data: { name: fileName, locatedFolder, index }, sendFi
     }
   }
 
+  const rowClassNames = 'row row--file-list ' + (selected ? 'row--selected' : '')
   return (
-    <div className="row row--file-list">
+    <div className={rowClassNames}>
       <DoubleTap
         className={'column-fileName'}
         content={fileName}
