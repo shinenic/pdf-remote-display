@@ -10,24 +10,9 @@ import matchSorter from 'match-sorter'
 // import dataArray from '../data/songSearch'
 import fileList from '../data/songFilePathObj'
 import { clearAllBlank, isZhuyin } from '../utils/base'
-import styled, { createGlobalStyle, ThemeProvider } from 'styled-components'
-import { lightTheme, darkTheme } from '../styles/AppTheme'
 
 const INIT_RESULT_COUNT = 20
 const ADD_RESULT_COUNT = 50
-
-const GlobalStyle = createGlobalStyle`
-  html {
-    background:${props => props.theme.main[0]};
-  }
-`
-
-const MainDiv = styled.div`
-  margin: 0px;
-  padding: 0px;
-  position: relative;
-  width: 100%;
-`
 
 class Search extends Component {
   constructor() {
@@ -138,10 +123,6 @@ class Search extends Component {
     this.addHistory(artistWithoutDelimiters)
   }
 
-  toggleTheme() {
-    this.setState({ theme: !this.state.theme })
-  }
-
   getDisplayMode() {
     if (this.state.inputText !== '' && !isZhuyin(clearAllBlank(this.state.inputText).slice(-1)))
       return 'NO_RESULT'
@@ -161,35 +142,31 @@ class Search extends Component {
     console.log(this.state.result)
 
     return (
-      <ThemeProvider theme={theme ? darkTheme : lightTheme}>
-        <MainDiv className="main">
-          <GlobalStyle />
-          <div style={{ height: '35px' }} />
-          <TopCard
-            inputText={inputText}
-            isCleaned={isCleaned}
-            clearInputText={() => this.clearInputText()}
-            toggleTheme={() => this.toggleTheme()}
-            updateInputText={str => this.updateInputText(str)}
-            search={str => this.search(str)}
-            addHistory={str => this.addHistory(str)} />
-          {result.slice(0, currentCount).map((data, index) =>
-            // <Result
-            //   key={index}
-            //   title={data[0]}
-            //   artist={data[1]}
-            //   volume={data[2]}
-            //   page={data[3]}
-            //   findArtist={() => this.findArtist(data[1])} />
-            <Result
-              key={index}
-              fileName={data.name}
-              index={data.index}
-              locatedFolder={data.locatedFolder} />
-          )}
-          {isNoResult && <NoResultHint displayMode={this.getDisplayMode()} />}
-        </MainDiv>
-      </ThemeProvider >
+      <div className="search-container">
+        <div style={{ height: '35px' }} />
+        <TopCard
+          inputText={inputText}
+          isCleaned={isCleaned}
+          clearInputText={() => this.clearInputText()}
+          updateInputText={str => this.updateInputText(str)}
+          search={str => this.search(str)}
+          addHistory={str => this.addHistory(str)} />
+        {result.slice(0, currentCount).map((data, index) =>
+          // <Result
+          //   key={index}
+          //   title={data[0]}
+          //   artist={data[1]}
+          //   volume={data[2]}
+          //   page={data[3]}
+          //   findArtist={() => this.findArtist(data[1])} />
+          <Result
+            key={index}
+            fileName={data.name}
+            index={data.index}
+            locatedFolder={data.locatedFolder} />
+        )}
+        {isNoResult && <NoResultHint displayMode={this.getDisplayMode()} />}
+      </div>
     )
   }
 }

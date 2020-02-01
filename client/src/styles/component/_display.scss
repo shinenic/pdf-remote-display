@@ -1,0 +1,11 @@
+.viewer {
+  width: 00%;
+  height: 100%;
+  background-color: #CCC;
+
+  & canvas {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}

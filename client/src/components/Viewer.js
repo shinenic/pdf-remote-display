@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { pdfjs } from 'react-pdf'
 import { Document, Page } from 'react-pdf'
-import styled from 'styled-components'
 import { RENDER_SIZE_BY_HEIGHT, RENDER_SIZE_BY_WIDTH} from '../constants'
 import { getViewport } from '../utils/base'
 
@@ -9,22 +8,10 @@ import { pdfjsWorkerSrc, samepleFile } from '../config'
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorkerSrc(pdfjs.version)
 
-const MainDiv = styled.div`
-  width: 100%;
-  height: 100%;
-  background-color: #CCC;
-
-  & canvas {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-`
-
 // TODO: Render pdf canvas according to width or height
 // TODO: Add float buttun on top side (which can link to home page)
 
-class App extends Component {
+class Viewer extends Component {
   state = {
     pageCount: null,
     pageNumber: 1,
@@ -48,7 +35,7 @@ class App extends Component {
     const viewport = getViewport()
 
     return (
-      <MainDiv onClick={() => this.handleOnClick()}>
+      <div className="viewer" onClick={() => this.handleOnClick()}>
         <Document
           file={samepleFile}
           className='pdf-container'
@@ -59,9 +46,9 @@ class App extends Component {
             renderAnnotationLayer={false}
             renderTextLayer={false}/>
         </Document>
-      </MainDiv>
+      </div>
     )
   }
 }
 
-export default App
+export default Viewer
