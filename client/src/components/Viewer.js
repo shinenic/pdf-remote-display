@@ -38,7 +38,7 @@ class Viewer extends Component {
       <div className="viewer" onClick={() => this.handleOnClick()}>
         <Document
           file={samepleFile}
-          className='pdf-container'
+          className="pdf-container"
           onLoadSuccess={pdf => this.handleDocumentLoadSuccess(pdf)}>
           <Page 
             pageNumber={pageNumber} 

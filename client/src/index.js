@@ -5,22 +5,10 @@ import Home from './components/Home'
 import Search from './components/Search'
 import Viewer from './components/Viewer'
 import * as serviceWorker from './serviceWorker'
-import { BrowserRouter, Switch, Link, Route } from 'react-router-dom'
-
-// const Home = () => {
-//   return (
-//     <>
-//       <Link to="/">Home</Link>
-//       <Link to="/display">Display</Link>
-//       <Link to="/search">Search</Link>
-//     </>
-//   )
-// }
+import { BrowserRouter, Switch, Route } from 'react-router-dom'
 
 ReactDOM.render(
   <BrowserRouter>
-    {/* A <Switch> looks through its children <Route>s and
-            renders the first one that matches the current URL. */}
     <Switch>
       <Route path="/viewer">
         <Viewer />

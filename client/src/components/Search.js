@@ -9,7 +9,7 @@ import matchSorter from 'match-sorter'
 
 // import dataArray from '../data/songSearch'
 import fileList from '../data/songFilePathObj'
-import { clearAllBlank, isZhuyin } from '../utils/base'
+import { clearAllBlank, isZhuyin, getUrlPath, getUrlQueryParams } from '../utils/base'
 
 const INIT_RESULT_COUNT = 20
 const ADD_RESULT_COUNT = 50
@@ -23,33 +23,25 @@ class Search extends Component {
       history: [],
       isCleaned: true,
       currentCount: INIT_RESULT_COUNT,
-      theme: 'INIT'
+      incognito: false
     }
   }
 
   componentDidMount() {
     // Set scroll event listener
-    const { s: searchParam } = this.getUrlParams()
+    const { s: searchParam, incognito } = getUrlQueryParams()
     if (searchParam) {
       this.search(searchParam)
       this.updateInputText(searchParam)
+    }
+    if (incognito) {
+      this.setState({ incognito: true })
     }
     window.addEventListener('scroll', () => this.handleScroll())
   }
 
   componentWillUnmount() {
     window.removeEventListener('scroll', () => this.handleScroll())
-  }
-
-  // Return a object of url's params
-  getUrlParams() {
-    const queries = decodeURI(window.location.href).split('?')[1]
-    return queries
-      ? queries.split('&').reduce((acc, value) => {
-        acc[value.split('=')[0]] = value.split('=')[1]
-        return acc
-      }, {})
-      : {}
   }
 
   // TODO: When scroll down to specific position, it will show a icon and auto scroll to top after clicked
@@ -90,8 +82,8 @@ class Search extends Component {
   }
 
   addHistory(str) {
+    const { incognito } = this.state
     const content = clearAllBlank(str)
-    const { incognito } = this.getUrlParams()
     const { history } = this.state
     const incognitoParam = incognito ? '&incognito=true' : ''
     // If the input(removed all blank) is not empty
@@ -105,7 +97,7 @@ class Search extends Component {
 
   // TODO: Add polyfill for smooth scrollTop
   clearInputText() {
-    const { incognito } = this.getUrlParams()
+    const { incognito } = this.state
     if (this.state.inputText !== '') {
       // It will update inputText only but result
       this.setState({ inputText: '' })
@@ -132,7 +124,6 @@ class Search extends Component {
 
   render() {
     const {
-      theme,
       inputText,
       isCleaned,
       result,
