@@ -4,7 +4,6 @@ import DoubleTap from './common/doubleTap'
 const SongListResult = ({ data, findArtist }) => {
 
   const [title, artist, volume, page] = data
-  console.log(data)
   
   const getFieldText = () => {
     /*

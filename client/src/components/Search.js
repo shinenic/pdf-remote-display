@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
 import axios from 'axios'
+import webSocket from 'socket.io-client'
 
 import TopCard from './TopCard'
 import FileListResult from './FileListResult'
@@ -28,7 +29,8 @@ class Search extends Component {
       currentCount: INIT_RESULT_COUNT,
       incognito: false,
       searchMode: null,
-      data: []
+      data: [],
+      ws: null
     }
   }
 
@@ -36,8 +38,10 @@ class Search extends Component {
     const searchMode = getUrlPath()[0]
     const { s: searchParam, incognito } = getUrlQueryParams()
     const data = await this.getDataList(searchMode)
+    console.log(data)
     this.setSearchInitState(searchMode, data, incognito, searchParam)
-    // Set scroll event listener
+    // Set Web Socket
+    this.connectWebSocket()
     window.addEventListener('scroll', () => this.handleScroll())
   }
 
@@ -73,6 +77,26 @@ class Search extends Component {
     })
   }
 
+  connectWebSocket() {
+    this.setState({
+      ws: webSocket(api.webSocket)
+    }, () => {
+      console.log('success connect!')
+      //對 getMessage 設定監聽，如果 server 有透過 getMessage 傳送訊息，將會在此被捕捉
+      this.state.ws.on('getPDFFile', (message) => {
+        console.log(message)
+        alert(message)
+      })
+    })
+  }
+
+  sendFileIndex(index) {
+    //以 emit 送訊息，並以 getMessage 為名稱送給 server 捕捉
+    this.state.ws.emit('getPDFFile', index, res => {
+      console.log(res)
+    })
+  }
+
   // TODO: When scroll down to specific position, it will show a icon and auto scroll to top after clicked
   handleScroll() {
     const { currentCount, result } = this.state
@@ -92,12 +116,11 @@ class Search extends Component {
 
   search(str) {
     const content = clearAllBlank(str)
-    const { data } = this.state
+    const { data, searchMode } = this.state
     // If the input(removed all blank) is not empty and the last character is not Zhuyin
     if (!isZhuyin(content.slice(-1)) && content !== '') {
-      // const result = matchSorter(data, content)
-      // const result = matchSorter(data, content, { keys: ['name', 'locatedFolder'] })
-      const result = matchSorter(data, content)
+      const result = matchSorter(data, content
+        , searchMode === SEARCH_MODE_TYPE.FILE_LIST ? { keys: ['name', 'locatedFolder'] } : {})
       this.setState({
         result,
         isCleaned: false,
@@ -168,7 +191,8 @@ class Search extends Component {
           return (
             <FileListResult
               key={index}
-              data={data} />
+              data={data}
+              sendFileIndex={index => this.sendFileIndex(index)} />
           )
         case SEARCH_MODE_TYPE.SONG_LIST:
           return (
@@ -191,7 +215,6 @@ class Search extends Component {
       result
     } = this.state
     const isNoResult = result.length === 0
-    console.log(this.state.result)
 
     return (
       <div className="search-container">

@@ -1,7 +1,7 @@
 import React from 'react'
 import DoubleTap from './common/doubleTap'
 
-const FileListResult = ({ data: { name: fileName, locatedFolder, index } }) => {
+const FileListResult = ({ data: { name: fileName, locatedFolder, index }, sendFileIndex }) => {
 
   const getYTSearchKeywork = fileName => {
     const strWithoutBlank = fileName.replace(/\s/g, '')
@@ -27,7 +27,7 @@ const FileListResult = ({ data: { name: fileName, locatedFolder, index } }) => {
       <DoubleTap
         className={'column-fileFolder'}
         content={locatedFolder}
-        doubleTapEvent={() => { return null }} />
+        doubleTapEvent={() => sendFileIndex(index)} />
     </div>
   )
 }

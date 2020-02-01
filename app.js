@@ -1,28 +1,28 @@
 const express = require("express")
+const http = require('http')
 const app = express()
 const logfmt = require("logfmt")
 const path = require('path')
 const cors = require('cors')
 const fs = require('fs')
+const socket = require('socket.io')
 const { omitKeyInArray } = require('./utils/base')
 const getFileList = require('./src/getFileList')
 
+const PORT = 5005
 
+// Init File list data
 const directoryPath = path.join(__dirname, '/pdfs/')
 let fileList = getFileList(directoryPath)
 let fileListWithoutPath = omitKeyInArray(fileList, 'path')
-console.log(fileList)
 
 // 到時候不用傳全部KEY給CLIENT
-const PORT = 5005
 // const songSearchAPIRouter = require('./router/api')
 // const indexRouter = require('./router/index')
 // const searchRouter = require('./router/search')
 
-// LOG
+// LOG & CORS
 app.use(logfmt.requestLogger())
-
-// CLORS
 app.use(cors())
 
 app.get('/', (req, res) => {
@@ -30,7 +30,7 @@ app.get('/', (req, res) => {
 })
 
 app.get('/pdf', (req, res) => {
-  const path = fileList[req.query.path].path
+  const path = fileList[req.query.index].path
   // res.send('path = ' + path)
   // res.send('path = ' + req.params.path)
   const file = fs.readFileSync(path)
@@ -65,7 +65,24 @@ app.get('/filelist', (req, res) => {
 
 
 // LISTEN
-var port = Number(process.env.PORT || PORT)
-app.listen(port, () => {
+// app.listen(port, () => {
+  //   console.log("Listening on " + port)
+  // })
+  
+const port = Number(process.env.PORT || PORT)
+const server = http.Server(app).listen(port, () => {
   console.log("Listening on " + port)
+})
+
+const io = socket(server)
+
+//監聽 Server 連線後的所有事件，並捕捉事件 socket 執行
+io.on('connection', socket => {
+  //經過連線後在 console 中印出訊息
+  console.log('success connect!')
+  //監聽透過 connection 傳進來的事件
+  socket.on('getPDFFile', message => {
+    const fileIndex = message
+    io.sockets.emit('getPDFFile', fileIndex)
+  })
 })
