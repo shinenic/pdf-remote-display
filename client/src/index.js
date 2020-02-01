@@ -13,7 +13,7 @@ ReactDOM.render(
       <Route path="/viewer">
         <Viewer />
       </Route>
-      <Route path="/search">
+      <Route path="/filelist">
         <Search />
       </Route>
       <Route path="/">

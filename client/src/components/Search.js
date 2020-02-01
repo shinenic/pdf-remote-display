@@ -3,11 +3,14 @@ import { withRouter } from 'react-router-dom'
 import axios from 'axios'
 
 import TopCard from './TopCard'
-import Result from './FileListResult'
+import FileListResult from './FileListResult'
+import SongListResult from './SongListResult'
 import NoResultHint from './NoResultHint'
 import matchSorter from 'match-sorter'
+import { api } from '../config/index'
 
-// import dataArray from '../data/songSearch'
+import { SEARCH_MODE_TYPE } from '../constants/index'
+import dataArray from '../data/songSearch'
 import fileList from '../data/songFilePathObj'
 import { clearAllBlank, isZhuyin, getUrlPath, getUrlQueryParams } from '../utils/base'
 
@@ -23,20 +26,25 @@ class Search extends Component {
       history: [],
       isCleaned: true,
       currentCount: INIT_RESULT_COUNT,
-      incognito: false
+      incognito: false,
+      searchMode: null
     }
   }
 
+  // 改成同步
+  // 先接收JSON FILE再去搜尋
   componentDidMount() {
-    // Set scroll event listener
     const { s: searchParam, incognito } = getUrlQueryParams()
+    const searchMode = getUrlPath()[0]
+    this.setState({
+      searchMode,
+      incognito: !!incognito
+    })
     if (searchParam) {
       this.search(searchParam)
       this.updateInputText(searchParam)
     }
-    if (incognito) {
-      this.setState({ incognito: true })
-    }
+    // Set scroll event listener
     window.addEventListener('scroll', () => this.handleScroll())
   }
 
@@ -85,20 +93,22 @@ class Search extends Component {
     const { incognito } = this.state
     const content = clearAllBlank(str)
     const { history } = this.state
+    const keywordParam = `s=${content}`
     const incognitoParam = incognito ? '&incognito=true' : ''
+    const [ pathname ] = getUrlPath()
     // If the input(removed all blank) is not empty
     // , the last character is not Zhuyin and have no duplicated history
     if (!isZhuyin(content.slice(-1)) && content !== '' && (history.length === 0 || str !== history[0])) {
       this.setState({ history: [content, ...history] })
-      this.props.history.push(encodeURI(`search?s=${content}${incognitoParam}`))
-      !incognito && this.saveToDatabase('https://songsearch.kadenzwei.com/api/ss', content)
+      this.props.history.push(encodeURI(`${pathname}?${keywordParam}${incognitoParam}`))
+      !incognito && this.saveToDatabase(api.addHistory, content)
     }
   }
 
   // TODO: Add polyfill for smooth scrollTop
   clearInputText() {
     const { incognito } = this.state
-    const { pathname } = window.location
+    const [ pathname ] = getUrlPath()
     if (this.state.inputText !== '') {
       // It will update inputText only but result
       this.setState({ inputText: '' })
@@ -124,21 +134,26 @@ class Search extends Component {
   }
 
   renderResult() {
-    const { result, currentCount } = this.state
-    const view = result.slice(0, currentCount).map((data, index) =>
-      // <Result
-      //   key={index}
-      //   title={data[0]}
-      //   artist={data[1]}
-      //   volume={data[2]}
-      //   page={data[3]}
-      //   findArtist={() => this.findArtist(data[1])} />
-      <Result
-        key={index}
-        fileName={data.name}
-        index={data.index}
-        locatedFolder={data.locatedFolder} />
-    )
+    const { result, currentCount, searchMode } = this.state
+    const view = result.slice(0, currentCount).map((data, index) => {
+      switch (searchMode) {
+        case SEARCH_MODE_TYPE.FILE_LIST:
+          return (
+            <FileListResult
+              key={index}
+              data={data} />
+          )
+        case SEARCH_MODE_TYPE.SONG_LIST:
+          return (
+            <SongListResult
+              key={index}
+              data={data}
+              findArtist={() => this.findArtist(data[1])} />
+          )
+        default:
+          return null
+      }
+    })
     return view
   }
 
@@ -146,8 +161,7 @@ class Search extends Component {
     const {
       inputText,
       isCleaned,
-      result,
-      currentCount
+      result
     } = this.state
     const isNoResult = result.length === 0
     console.log(this.state.result)

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { pdfjs } from 'react-pdf'
 import { Document, Page } from 'react-pdf'
-import { RENDER_SIZE_BY_HEIGHT, RENDER_SIZE_BY_WIDTH} from '../constants'
+import { RENDER_SIZE_BY_HEIGHT, RENDER_SIZE_BY_WIDTH } from '../constants'
 import { getViewport } from '../utils/base'
 
 import { pdfjsWorkerSrc, samepleFile } from '../config'

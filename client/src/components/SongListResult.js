@@ -1,8 +1,10 @@
 import React from 'react'
 import DoubleTap from './common/doubleTap'
 
-const Result = ({ title, artist, volume, page, findArtist }) => {
+const SongListResult = ({ data, findArtist }) => {
 
+  const [title, artist, volume, page] = data
+  
   const getFieldText = () => {
     /*
      * If no artist data                       =>  Replace artist text with "-"
@@ -26,7 +28,7 @@ const Result = ({ title, artist, volume, page, findArtist }) => {
   const fieldText = getFieldText()
 
   return (
-    <div className="row">
+    <div className="row row--song-list">
       <DoubleTap
         className={'column-title'}
         content={fieldText.title}
@@ -40,4 +42,4 @@ const Result = ({ title, artist, volume, page, findArtist }) => {
   )
 }
 
-export default Result
+export default SongListResult

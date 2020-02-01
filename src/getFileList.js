@@ -21,7 +21,6 @@ const getLastArrayIndex = fileList => {
 }
 
 const walkSync = (dir, _fileList) => {
-  console.log('123')
   let fileList = _fileList || []
   const files = fs.readdirSync(dir)
   files.forEach(file => {
@@ -50,7 +49,5 @@ const walkSync = (dir, _fileList) => {
   return fileList
 }
 
-// fs.writeFileSync('./fileList.txt', JSON.stringify(walkSync(directoryPath)))
+// fs.writeFileSync('./_fileListAr', JSON.stringify(walkSync(directoryPath)))
 module.exports = walkSync
-
-// module.exports = walkSync(directoryPath)
