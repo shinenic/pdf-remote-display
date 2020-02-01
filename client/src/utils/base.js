@@ -21,7 +21,7 @@ export const getUrlPath = () => {
 
 // Return a "Object" of url query params (default value is TRUE)
 export const getUrlQueryParams = () => {
-  const searchUrl = window.location.search
+  const searchUrl = decodeURI(window.location.search)
   if(searchUrl === '') return {}
 
   const query = searchUrl.slice(1).split('&')
