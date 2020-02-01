@@ -6,13 +6,21 @@
   font-weight: bold;
   line-height: 1.6rem;
   margin: 2rem 1rem 3rem 1rem;
-  grid-template-columns: 0.6fr 0.4fr 5rem;
-  grid-template-areas: "title artist position";
   opacity: 0;
   @extend %fadeIn;
+
+  &--song-list {
+    grid-template-columns: 0.6fr 0.4fr 5rem;
+    grid-template-areas: "title artist position";
+  }
+
+  &--file-list {
+    grid-template-columns:0.65fr 0.35fr;
+    grid-template-areas:"fileName fileFolder";
+  }
 }
 
-%gridCenter {
+%resultGrid {
   display: grid;
   align-items: center;
   justify-content: center;
@@ -25,21 +33,32 @@
 
 .column {
   &-title {
+    @extend %resultGrid;
     justify-content: start;
     grid-area: title;
-    @extend %gridCenter;
   }
 
   &-artist {
+    @extend %resultGrid;
     font-size: 1.1rem;
     grid-area: artist;
     white-space: pre-wrap;
     text-align: center;
-    @extend %gridCenter;
   }
 
   &-position {
+    @extend %resultGrid;
     grid-area: position;  
-    @extend %gridCenter;
+  }
+
+  &-fileName {
+    @extend %resultGrid;
+    grid-area: fileName;
+    justify-content:start;
+  }
+
+  &-fileFolder {
+    @extend %resultGrid;
+    grid-area: fileFolder;
   }
 }

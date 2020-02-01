@@ -3,7 +3,7 @@ import { withRouter } from 'react-router-dom'
 import axios from 'axios'
 
 import TopCard from './TopCard'
-import Result from './Result'
+import Result from './FileListResult'
 import NoResultHint from './NoResultHint'
 import matchSorter from 'match-sorter'
 
@@ -98,6 +98,7 @@ class Search extends Component {
   // TODO: Add polyfill for smooth scrollTop
   clearInputText() {
     const { incognito } = this.state
+    const { pathname } = window.location
     if (this.state.inputText !== '') {
       // It will update inputText only but result
       this.setState({ inputText: '' })
@@ -105,7 +106,7 @@ class Search extends Component {
     } else {
       this.setState({ result: [], isCleaned: true })
     }
-    this.props.history.push(incognito ? '?incognito=true' : '')
+    this.props.history.push(incognito ? pathname + '?incognito=true' : pathname)
   }
 
   findArtist(artist) {
@@ -120,6 +121,25 @@ class Search extends Component {
       return 'NO_RESULT'
     else
       return 'DEFAULT'
+  }
+
+  renderResult() {
+    const { result, currentCount } = this.state
+    const view = result.slice(0, currentCount).map((data, index) =>
+      // <Result
+      //   key={index}
+      //   title={data[0]}
+      //   artist={data[1]}
+      //   volume={data[2]}
+      //   page={data[3]}
+      //   findArtist={() => this.findArtist(data[1])} />
+      <Result
+        key={index}
+        fileName={data.name}
+        index={data.index}
+        locatedFolder={data.locatedFolder} />
+    )
+    return view
   }
 
   render() {
@@ -142,20 +162,7 @@ class Search extends Component {
           updateInputText={str => this.updateInputText(str)}
           search={str => this.search(str)}
           addHistory={str => this.addHistory(str)} />
-        {result.slice(0, currentCount).map((data, index) =>
-          // <Result
-          //   key={index}
-          //   title={data[0]}
-          //   artist={data[1]}
-          //   volume={data[2]}
-          //   page={data[3]}
-          //   findArtist={() => this.findArtist(data[1])} />
-          <Result
-            key={index}
-            fileName={data.name}
-            index={data.index}
-            locatedFolder={data.locatedFolder} />
-        )}
+        {this.renderResult()}
         {isNoResult && <NoResultHint displayMode={this.getDisplayMode()} />}
       </div>
     )

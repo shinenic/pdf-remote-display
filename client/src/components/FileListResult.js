@@ -36,7 +36,7 @@ import DoubleTap from './common/doubleTap'
 //   grid-area:fileFolder;
 // `
 
-const Result = ({ fileName, locatedFolder, index }) => {
+const FileListResult = ({ fileName, locatedFolder, index }) => {
 
   const getYTSearchKeywork = fileName => {
     const strWithoutBlank = fileName.replace(/\s/g, '')
@@ -54,17 +54,17 @@ const Result = ({ fileName, locatedFolder, index }) => {
   }
 
   return (
-    <div className="row">
+    <div className="row row--file-list">
       <DoubleTap
-        className={'column-title'}
+        className={'column-fileName'}
         content={fileName}
         doubleTapEvent={() => connectToYoutube()} />
       <DoubleTap
-        className={'column-title'}
+        className={'column-fileFolder'}
         content={locatedFolder}
         doubleTapEvent={() => { return null }} />
     </div>
   )
 }
 
-export default Result
+export default FileListResult
