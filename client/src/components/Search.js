@@ -12,7 +12,6 @@ import { api } from '../config/index'
 
 import { SEARCH_MODE_TYPE } from '../constants/index'
 import songListData from '../data/songSearch'
-import fileList from '../data/songFilePathObj'
 import { clearAllBlank, isZhuyin, getUrlPath, getUrlQueryParams } from '../utils/base'
 
 const INIT_RESULT_COUNT = 20
@@ -39,9 +38,7 @@ class Search extends Component {
     const searchMode = getUrlPath()[0]
     const { s: searchParam, incognito } = getUrlQueryParams()
     const data = await this.getDataList(searchMode)
-    console.log(data)
     this.setSearchInitState(searchMode, data, incognito, searchParam)
-    // Set Web Socket
     this.connectWebSocket()
     window.addEventListener('scroll', () => this.handleScroll())
   }
