@@ -7,6 +7,7 @@ const Home = () => {
       <Link to="/">Home</Link>
       <Link to="/viewer">Viewer</Link>
       <Link to="/filelist">File List</Link>
+      <Link to="/songlist">Song List</Link>
     </div>
   )
 }

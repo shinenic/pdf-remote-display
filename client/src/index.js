@@ -16,6 +16,9 @@ ReactDOM.render(
       <Route path="/filelist">
         <Search />
       </Route>
+      <Route path="/songlist">
+        <Search />
+      </Route>
       <Route path="/">
         <Home />
       </Route>

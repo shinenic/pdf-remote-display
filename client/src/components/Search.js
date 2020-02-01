@@ -92,10 +92,12 @@ class Search extends Component {
 
   search(str) {
     const content = clearAllBlank(str)
+    const { data } = this.state
     // If the input(removed all blank) is not empty and the last character is not Zhuyin
     if (!isZhuyin(content.slice(-1)) && content !== '') {
-      // const result = matchSorter(dataArray, content)
-      const result = matchSorter(fileList, content, { keys: ['name', 'locatedFolder'] })
+      // const result = matchSorter(data, content)
+      // const result = matchSorter(data, content, { keys: ['name', 'locatedFolder'] })
+      const result = matchSorter(data, content)
       this.setState({
         result,
         isCleaned: false,
@@ -138,6 +140,10 @@ class Search extends Component {
       this.setState({ result: [], isCleaned: true })
     }
     this.props.history.push(incognito ? pathname + '?incognito=true' : pathname)
+  }
+
+  backToHome() {
+    this.props.history.push('/')
   }
 
   findArtist(artist) {
@@ -196,6 +202,7 @@ class Search extends Component {
           clearInputText={() => this.clearInputText()}
           updateInputText={str => this.updateInputText(str)}
           search={str => this.search(str)}
+          backToHome={() => this.backToHome()}
           addHistory={str => this.addHistory(str)} />
         {this.renderResult()}
         {isNoResult && <NoResultHint displayMode={this.getDisplayMode()} />}

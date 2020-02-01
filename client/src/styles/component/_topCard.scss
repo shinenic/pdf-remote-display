@@ -73,6 +73,4 @@
 
 .menu-img {
   @extend %icon;
-  transition: transform 0.3s;
-  transform: rotate(180deg);
 }

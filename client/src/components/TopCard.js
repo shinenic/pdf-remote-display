@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import MenuImg from "../img/half.svg"
+import HomeImg from "../img/home.svg"
 import CrossImg from "../img/cross.svg"
 import SearchImg from "../img/search.svg"
 
@@ -30,7 +30,7 @@ class SearchInput extends Component {
   }
 
   render() {
-    const { inputText, isCleaned, clearInputText } = this.props
+    const { inputText, isCleaned, clearInputText, backToHome } = this.props
     return (
       <div className="search-card">
         <input
@@ -44,16 +44,20 @@ class SearchInput extends Component {
           ref={(ref) => { this.input = ref }} />
         <div className="icon-container icon-container--left">
           <img
-            src={MenuImg}
+            src={HomeImg}
             alt="icon"
-            className="menu-img" />
+            className="menu-img"
+            onClick={backToHome}/>
         </div>
         <div className="icon-container icon-container--right">
           <img
             src={CrossImg}
             alt="icon"
             className={isCleaned ? 'hide' : 'cross-img'}
-            onClick={() => clearInputText()} />
+            onClick={() => {
+              clearInputText()
+              this.input.focus()
+            }} />
           <img
             src={SearchImg}
             alt="icon"
