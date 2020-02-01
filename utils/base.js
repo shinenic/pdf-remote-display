@@ -12,3 +12,11 @@ exports.getFileSizeText = fileSize => {
   return sizeKB
 }
 
+exports.omitKeyInArray = (arr, key) => {
+  const newArr = arr.map((value) => {
+    const obj = Object.assign({}, value)
+    delete obj[key]
+    return obj
+  })
+  return newArr
+}

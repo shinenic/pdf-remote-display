@@ -10,7 +10,7 @@ import matchSorter from 'match-sorter'
 import { api } from '../config/index'
 
 import { SEARCH_MODE_TYPE } from '../constants/index'
-import dataArray from '../data/songSearch'
+import songListData from '../data/songSearch'
 import fileList from '../data/songFilePathObj'
 import { clearAllBlank, isZhuyin, getUrlPath, getUrlQueryParams } from '../utils/base'
 
@@ -27,29 +27,50 @@ class Search extends Component {
       isCleaned: true,
       currentCount: INIT_RESULT_COUNT,
       incognito: false,
-      searchMode: null
+      searchMode: null,
+      data: []
     }
   }
 
-  // 改成同步
-  // 先接收JSON FILE再去搜尋
-  componentDidMount() {
-    const { s: searchParam, incognito } = getUrlQueryParams()
+  async componentDidMount() {
     const searchMode = getUrlPath()[0]
-    this.setState({
-      searchMode,
-      incognito: !!incognito
-    })
-    if (searchParam) {
-      this.search(searchParam)
-      this.updateInputText(searchParam)
-    }
+    const { s: searchParam, incognito } = getUrlQueryParams()
+    const data = await this.getDataList(searchMode)
+    this.setSearchInitState(searchMode, data, incognito, searchParam)
     // Set scroll event listener
     window.addEventListener('scroll', () => this.handleScroll())
   }
 
   componentWillUnmount() {
     window.removeEventListener('scroll', () => this.handleScroll())
+  }
+
+  async getDataList(searchMode) {
+    let data
+    switch (searchMode) {
+      case SEARCH_MODE_TYPE.FILE_LIST:
+        await axios.get(api.getFileList).then(res => { data = res.data })
+        break
+      case SEARCH_MODE_TYPE.SONG_LIST:
+        data = songListData
+        break
+      default:
+        data = []
+    }
+    return data
+  }
+
+  setSearchInitState(searchMode, data, incognito, searchParam) {
+    this.setState({
+      searchMode,
+      data,
+      incognito: !!incognito
+    }, () => {
+      if (searchParam) {
+        this.search(searchParam)
+        this.updateInputText(searchParam)
+      }
+    })
   }
 
   // TODO: When scroll down to specific position, it will show a icon and auto scroll to top after clicked
@@ -95,7 +116,7 @@ class Search extends Component {
     const { history } = this.state
     const keywordParam = `s=${content}`
     const incognitoParam = incognito ? '&incognito=true' : ''
-    const [ pathname ] = getUrlPath()
+    const [pathname] = getUrlPath()
     // If the input(removed all blank) is not empty
     // , the last character is not Zhuyin and have no duplicated history
     if (!isZhuyin(content.slice(-1)) && content !== '' && (history.length === 0 || str !== history[0])) {
@@ -108,7 +129,7 @@ class Search extends Component {
   // TODO: Add polyfill for smooth scrollTop
   clearInputText() {
     const { incognito } = this.state
-    const [ pathname ] = getUrlPath()
+    const [pathname] = getUrlPath()
     if (this.state.inputText !== '') {
       // It will update inputText only but result
       this.setState({ inputText: '' })

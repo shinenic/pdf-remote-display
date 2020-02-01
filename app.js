@@ -4,10 +4,13 @@ const logfmt = require("logfmt")
 const path = require('path')
 const cors = require('cors')
 const fs = require('fs')
+const { omitKeyInArray } = require('./utils/base')
 const getFileList = require('./src/getFileList')
+
 
 const directoryPath = path.join(__dirname, '/pdfs/')
 let fileList = getFileList(directoryPath)
+let fileListWithoutPath = omitKeyInArray(fileList, 'path')
 console.log(fileList)
 
 // 到時候不用傳全部KEY給CLIENT
@@ -43,16 +46,12 @@ app.get('/download', (req, res) => {
 
 app.get('/reloadfilelist', (req, res) => {
   fileList = getFileList(directoryPath)
+  fileListWithoutPath = omitKeyInArray(fileList, 'path')
   res.json({ message: 'File list update successed.' })
 })
 
 app.get('/filelist', (req, res) => {
-  const FileListWithoutPath = fileList.map((file) => {
-    const fileWithoutPath = Object.assign({}, file)
-    delete fileWithoutPath.path
-    return fileWithoutPath
-  })
-  res.json(FileListWithoutPath)
+  res.json(fileListWithoutPath)
 })
 
 
