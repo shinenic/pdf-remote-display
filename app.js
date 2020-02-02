@@ -24,7 +24,7 @@ let fileListWithoutPath = omitKeyInArray(fileList, 'path')
 app.use(logfmt.requestLogger())
 // app.use(cors())
 
-app.get('/api/pdf', (req, res) => {
+app.get('/api/pdffile', (req, res) => {
   const path = fileList[req.query.index].path
   const file = fs.readFileSync(path)
   res.contentType("application/pdf")
