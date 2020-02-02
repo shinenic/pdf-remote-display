@@ -46,7 +46,7 @@ class SearchInput extends Component {
           <img
             src={HomeImg}
             alt="icon"
-            className="menu-img"
+            className="home-img"
             onClick={backToHome}/>
         </div>
         <div className="icon-container icon-container--right">
