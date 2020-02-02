@@ -4,13 +4,12 @@ import axios from 'axios'
 import webSocket from 'socket.io-client'
 
 import TopCard from './TopCard'
-import FileListResult from './result/FileListResult'
-import SongListResult from './result/SongListResult'
+import Result from './result/Result'
 import NoResultHint from './NoResultHint'
 import matchSorter from 'match-sorter'
 import { api } from '../config/index'
 
-import { SEARCH_MODE_TYPE } from '../constants/index'
+import { SEARCH_MODE_TYPE, SEARCH_RESULT_TYPE } from '../constants/index'
 import songListData from '../data/songSearch'
 import { clearAllBlank, isZhuyin, getUrlPath, getUrlQueryParams } from '../utils/base'
 
@@ -43,7 +42,7 @@ class Search extends Component {
     this.setSearchInitState(searchMode, data, incognito, searchParam)
     this.connectWebSocket()
     window.addEventListener('scroll', () => this.handleScroll())
-    
+
   }
 
   componentWillUnmount() {
@@ -175,35 +174,9 @@ class Search extends Component {
 
   getDisplayMode() {
     if (this.state.inputText !== '' && !isZhuyin(clearAllBlank(this.state.inputText).slice(-1)))
-      return 'NO_RESULT'
+      return SEARCH_RESULT_TYPE.NO_RESULT
     else
-      return 'DEFAULT'
-  }
-
-  renderResult() {
-    const { result, currentCount, searchMode, selectedIndex } = this.state
-    const view = result.slice(0, currentCount).map((data, index) => {
-      switch (searchMode) {
-        case SEARCH_MODE_TYPE.FILE_LIST:
-          return (
-            <FileListResult
-              key={index}
-              data={data}
-              selected={data.index === selectedIndex}
-              sendFileIndex={index => this.sendFileIndex(index)} />
-          )
-        case SEARCH_MODE_TYPE.SONG_LIST:
-          return (
-            <SongListResult
-              key={index}
-              data={data}
-              findArtist={() => this.findArtist(data[1])} />
-          )
-        default:
-          return null
-      }
-    })
-    return view
+      return SEARCH_RESULT_TYPE.NO_KEYWORD
   }
 
   render() {
@@ -211,7 +184,10 @@ class Search extends Component {
       inputText,
       isCleaned,
       result,
-      isConnectedSocket
+      isConnectedSocket,
+      currentCount,
+      searchMode,
+      selectedIndex
     } = this.state
     const isNoResult = result.length === 0
 
@@ -227,7 +203,13 @@ class Search extends Component {
           backToHome={() => this.backToHome()}
           addHistory={str => this.addHistory(str)}
           isConnectedSocket={isConnectedSocket} />
-        {this.renderResult()}
+        <Result
+          result={result}
+          currentCount={currentCount}
+          searchMode={searchMode}
+          selectedIndex={selectedIndex}
+          sendFileIndex={index => this.sendFileIndex(index)}
+          findArtist={str => this.findArtist(str)}/>
         {isNoResult && <NoResultHint displayMode={this.getDisplayMode()} />}
       </div>
     )
