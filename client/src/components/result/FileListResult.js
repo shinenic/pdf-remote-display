@@ -1,5 +1,5 @@
 import React from 'react'
-import DoubleTap from './common/doubleTap'
+import DoubleTap from '../common/doubleTap'
 
 const FileListResult = ({
   data: { name: fileName, locatedFolder, index },

@@ -4,7 +4,7 @@ import HomeImg from "../img/home.svg"
 import CrossImg from "../img/cross.svg"
 import SearchImg from "../img/search.svg"
 
-const WAITING_FOR_ADD_HISTORY_TIMEOUT = 1000
+const WAITING_FOR_ADDING_HISTORY_TIMEOUT = 1000
 
 class SearchInput extends Component {
   constructor() {
@@ -26,7 +26,7 @@ class SearchInput extends Component {
     clearTimeout(this.timeOutHistory)
     this.timeOutHistory = setTimeout(() => {
       this.props.addHistory(this.props.inputText)
-    }, WAITING_FOR_ADD_HISTORY_TIMEOUT)
+    }, WAITING_FOR_ADDING_HISTORY_TIMEOUT)
   }
 
   render() {

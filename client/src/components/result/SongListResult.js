@@ -1,5 +1,5 @@
 import React from 'react'
-import DoubleTap from './common/doubleTap'
+import DoubleTap from '../common/doubleTap'
 
 const SongListResult = ({ data, findArtist }) => {
 

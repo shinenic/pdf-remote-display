@@ -1,6 +1,7 @@
-const clientUrl = window.location.host // www.somedomain.com (includes port if there is one)
-const ServerUrl = 'http://localhost:5005'
-// const ServerUrl = 'http://192.168.43.32:5005'
+const CLIENT_URL = window.location.host // www.somedomain.com (includes port if there is one)
+// const SERVER_URL = 'http://localhost:5005'
+const SERVER_URL = 'https://pdfviewer.kadenzwei.com'
+// const SERVER_URL = 'http://192.168.43.32:5005'
 
 export const pdfjsWorkerSrc = version => `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${version}/pdf.worker.js`
 
@@ -8,7 +9,7 @@ export const samepleFile = 'https://cdn.rawgit.com/mozilla/pdf.js/master/web/com
 
 export const api = {
   addHistory: 'https://songsearch.kadenzwei.com/api/ss',
-  getFileList: `${ServerUrl}/filelist`,
-  getPdfFile: `${ServerUrl}/pdf`,
-  webSocket: ServerUrl,
+  getFileList: `${SERVER_URL}/filelist`,
+  getPdfFile: `${SERVER_URL}/pdf`,
+  webSocket: SERVER_URL,
 }
