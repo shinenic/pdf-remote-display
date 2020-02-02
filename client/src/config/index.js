@@ -7,8 +7,8 @@ export const pdfjsWorkerSrc = version => `//cdnjs.cloudflare.com/ajax/libs/pdf.j
 export const samepleFile = 'https://cdn.rawgit.com/mozilla/pdf.js/master/web/compressed.tracemonkey-pldi-09.pdf'
 
 export const api = {
-  addHistory: 'https://songsearch.kadenzwei.com/api/ss',
-  getFileList: `${SERVER_URL}/filelist`,
-  getPdfFile: `${SERVER_URL}/pdf`,
+  addHistory: `${SERVER_URL}/api/pdf`,
+  getFileList: `${SERVER_URL}/api/filelist`,
+  getPdfFile: `${SERVER_URL}/api/pdf`,
   webSocket: SERVER_URL,
 }

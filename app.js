@@ -6,8 +6,11 @@ const path = require('path')
 const cors = require('cors')
 const fs = require('fs')
 const socket = require('socket.io')
+
 const { omitKeyInArray } = require('./utils/base')
 const getFileList = require('./src/getFileList')
+
+const dbAPIRouter = require('./router/db')
 
 const PORT = 5005
 
@@ -16,43 +19,38 @@ const directoryPath = path.join(__dirname, '/pdfs/')
 let fileList = getFileList(directoryPath)
 let fileListWithoutPath = omitKeyInArray(fileList, 'path')
 
-// const songSearchAPIRouter = require('./router/api')
-// const indexRouter = require('./router/index')
-// const searchRouter = require('./router/search')
 
 // LOG & CORS
 app.use(logfmt.requestLogger())
-app.use(cors())
+// app.use(cors())
 
-app.get('/', (req, res) => {
-  res.send(`PDF REMOTE DISPLY now on port ${PORT}`)
-})
-
-app.get('/pdf', (req, res) => {
+app.get('/api/pdf', (req, res) => {
   const path = fileList[req.query.index].path
   const file = fs.readFileSync(path)
   res.contentType("application/pdf")
   res.send(file)
 })
 
-app.get('/reloadfilelist', (req, res) => {
+app.get('/api/reloadfilelist', (req, res) => {
   fileList = getFileList(directoryPath)
   fileListWithoutPath = omitKeyInArray(fileList, 'path')
   res.json({ message: 'File list update successed.' })
 })
 
-app.get('/filelist', (req, res) => {
+app.get('/api/filelist', (req, res) => {
   res.json(fileListWithoutPath)
 })
 
 
 // API ROUTER
-// app.use(express.static(path.join(__dirname, '/../simple-song-search/build')))
-// app.use('/', indexRouter)
-// app.use(express.json())
-// app.use('/api', songSearchAPIRouter)
-// app.use('/search', express.static(__dirname + '/../simple-song-search/build'))
-// app.use('/search', searchRouter)
+const reactUrlPath = ['/', '/viewer', '/filelist', '/songlist']
+app.use(express.static(path.join(__dirname, '/client/build')))
+app.get(reactUrlPath, (req, res) => {
+  res.sendFile(path.join(__dirname+'/client/build/index.html'))
+})
+
+app.use(express.json())
+app.use('/api', dbAPIRouter)
 
 
 const port = Number(process.env.PORT || PORT)
