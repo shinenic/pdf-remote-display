@@ -25,6 +25,8 @@ class Viewer extends Component {
     isConnected: false
   }
 
+  pageRef = null
+
   componentDidMount() {
     this.connectWebSocket()
   }
@@ -51,6 +53,18 @@ class Viewer extends Component {
     this.setState({ pageCount: pdf.numPages })
   }
 
+  handleRenderSuccess() {
+    const { pdfDisplayMode } = this.state
+    const viewport = getViewport()
+    const canvasWidth = this.pageRef.firstChild.style.width.replace('px', '')
+    const canvasHeight = this.pageRef.firstChild.style.height.replace('px', '')
+    if (canvasWidth > viewport.width && pdfDisplayMode === RENDER_SIZE_BY_HEIGHT) {
+      this.setState({ pdfDisplayMode: RENDER_SIZE_BY_WIDTH })
+    } else if (canvasHeight > viewport.height && pdfDisplayMode === RENDER_SIZE_BY_WIDTH) {
+      this.setState({ pdfDisplayMode: RENDER_SIZE_BY_HEIGHT })
+    }
+  }
+
   handleOnClick() {
     const { pageCount, pageNumber } = this.state
     if (pageCount === 1) return null
@@ -60,18 +74,24 @@ class Viewer extends Component {
   }
 
   render() {
-    const { pageNumber, fileUrl, isConnected } = this.state
+    const { pageNumber, fileUrl, isConnected, pdfDisplayMode } = this.state
     const viewport = getViewport()
+    const canvasHeight = pdfDisplayMode === RENDER_SIZE_BY_HEIGHT ? viewport.height : null
+    const canvasWidth = pdfDisplayMode === RENDER_SIZE_BY_WIDTH ? viewport.width : null
 
     return (
       <div className="viewer" onClick={() => this.handleOnClick()}>
         <Document
           file={fileUrl}
           className="pdf-container"
+          inputRef={(ref) => { this.myDoc = ref }}
           onLoadSuccess={pdf => this.handleDocumentLoadSuccess(pdf)}>
           <Page
             pageNumber={pageNumber}
-            height={viewport.height}
+            inputRef={ref => { this.pageRef = ref }}
+            height={canvasHeight}
+            width={canvasWidth}
+            onRenderSuccess={() => this.handleRenderSuccess()}
             renderAnnotationLayer={false}
             renderTextLayer={false} />
         </Document>
