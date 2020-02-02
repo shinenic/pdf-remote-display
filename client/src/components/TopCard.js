@@ -30,7 +30,7 @@ class SearchInput extends Component {
   }
 
   render() {
-    const { inputText, isCleaned, clearInputText, backToHome } = this.props
+    const { inputText, isCleaned, clearInputText, backToHome, isConnectedSocket } = this.props
     return (
       <div className="search-card">
         <input
@@ -47,7 +47,8 @@ class SearchInput extends Component {
             src={HomeImg}
             alt="icon"
             className="home-img"
-            onClick={backToHome}/>
+            className={'home-img' + (isConnectedSocket ? ' connected' : '')}
+            onClick={backToHome} />
         </div>
         <div className="icon-container icon-container--right">
           <img

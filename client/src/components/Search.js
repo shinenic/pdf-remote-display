@@ -30,17 +30,20 @@ class Search extends Component {
       searchMode: null,
       data: [],
       ws: null,
+      isConnectedSocket: false,
       selectedIndex: -1
     }
   }
 
   async componentDidMount() {
-    const searchMode = getUrlPath()[0]
+    // Get searchMode from <Link>'s props or from url
+    const { searchMode = getUrlPath()[0] } = this.props.location
     const { s: searchParam, incognito } = getUrlQueryParams()
     const data = await this.getDataList(searchMode)
     this.setSearchInitState(searchMode, data, incognito, searchParam)
     this.connectWebSocket()
     window.addEventListener('scroll', () => this.handleScroll())
+    
   }
 
   componentWillUnmount() {
@@ -77,8 +80,12 @@ class Search extends Component {
 
   connectWebSocket() {
     this.setState({ ws: webSocket(api.webSocket) }, () => {
-      this.state.ws.on('getPDFFile', index => {
+      const { ws } = this.state
+      ws.on('getPDFFile', index => {
         this.setState({ selectedIndex: index })
+      })
+      ws.on('connect', () => {
+        this.setState({ isConnectedSocket: !!ws.connected })
       })
     })
   }
@@ -203,7 +210,8 @@ class Search extends Component {
     const {
       inputText,
       isCleaned,
-      result
+      result,
+      isConnectedSocket
     } = this.state
     const isNoResult = result.length === 0
 
@@ -217,7 +225,8 @@ class Search extends Component {
           updateInputText={str => this.updateInputText(str)}
           search={str => this.search(str)}
           backToHome={() => this.backToHome()}
-          addHistory={str => this.addHistory(str)} />
+          addHistory={str => this.addHistory(str)}
+          isConnectedSocket={isConnectedSocket} />
         {this.renderResult()}
         {isNoResult && <NoResultHint displayMode={this.getDisplayMode()} />}
       </div>

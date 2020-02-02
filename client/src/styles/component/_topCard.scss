@@ -73,4 +73,9 @@
 
 .home-img {
   @extend %icon;
+  filter: invert(1);
+
+  &.connected {
+    filter: map-get($icon-color, default);
+  }
 }
