@@ -17,7 +17,7 @@ class Viewer extends Component {
   state = {
     pageCount: null,
     pageNumber: 1,
-    pdfDisplayMode: RENDER_SIZE_BY_HEIGHT, // RENDER_SIZE_BY_WIDTH
+    pdfDisplayMode: RENDER_SIZE_BY_HEIGHT,
     ws: null,
     fileUrl: '',
     isConnected: false
@@ -94,6 +94,7 @@ class Viewer extends Component {
             height={canvasHeight}
             width={canvasWidth}
             onRenderSuccess={() => this.handleRenderSuccess()}
+            /* Reduce redundant html elements */
             renderAnnotationLayer={false}
             renderTextLayer={false} />
         </Document>
