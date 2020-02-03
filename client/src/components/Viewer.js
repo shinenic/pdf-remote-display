@@ -5,15 +5,13 @@ import { Link } from 'react-router-dom'
 import { pdfjs } from 'react-pdf'
 import { Document, Page } from 'react-pdf'
 
-import { RENDER_SIZE_BY_HEIGHT, RENDER_SIZE_BY_WIDTH } from '../constants'
-import { getViewport } from '../utils/base'
-import { pdfjsWorkerSrc, samepleFile, api } from '../config'
+import { RENDER_SIZE_BY_HEIGHT, RENDER_SIZE_BY_WIDTH, PDF_LOAD_SUCCESS } from '../constants'
+import { getViewport, getNowTime } from '../utils/base'
+import { getPdfjsWorkerSrc, api } from '../config'
 import HomeImg from "../img/home.svg"
 
-pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorkerSrc(pdfjs.version)
-
-// TODO: Render pdf canvas according to width or height
-// TODO: Add float buttun on top side (which can link to home page)
+const LOCAL_STORAGE_TIMEOUT = 3600000 // One hour
+pdfjs.GlobalWorkerOptions.workerSrc = getPdfjsWorkerSrc(pdfjs.version)
 
 class Viewer extends Component {
   state = {
@@ -29,6 +27,10 @@ class Viewer extends Component {
 
   componentDidMount() {
     this.connectWebSocket()
+    const localObj = JSON.parse(localStorage.getItem('fileUrl'))
+    if (localObj.timeOut + LOCAL_STORAGE_TIMEOUT > getNowTime()) {
+      this.setState({ fileUrl: localObj.fileUrl })
+    }
   }
 
   connectWebSocket() {
@@ -44,13 +46,14 @@ class Viewer extends Component {
   }
 
   setFileUrl(index) {
-    this.setState({
-      fileUrl: `${api.getPdfFile}?index=${index}`
-    })
+    this.setState({ fileUrl: `${api.getPdfFile}?index=${index}` })
   }
 
   handleDocumentLoadSuccess(pdf) {
+    const { ws, fileUrl } = this.state
     this.setState({ pageCount: pdf.numPages })
+    ws.emit('fileLoad', PDF_LOAD_SUCCESS)
+    localStorage.setItem('fileUrl', JSON.stringify({ fileUrl, timeOut: getNowTime() }))
   }
 
   handleRenderSuccess() {
@@ -84,7 +87,6 @@ class Viewer extends Component {
         <Document
           file={fileUrl}
           className="pdf-container"
-          inputRef={(ref) => { this.myDoc = ref }}
           onLoadSuccess={pdf => this.handleDocumentLoadSuccess(pdf)}>
           <Page
             pageNumber={pageNumber}
