@@ -28,7 +28,7 @@ class Viewer extends Component {
   componentDidMount() {
     this.connectWebSocket()
     const localObj = JSON.parse(localStorage.getItem('fileUrl'))
-    if (localObj.timeOut + LOCAL_STORAGE_TIMEOUT > getNowTime()) {
+    if (localObj.timeStamp + LOCAL_STORAGE_TIMEOUT > getNowTime()) {
       this.setState({ fileUrl: localObj.fileUrl })
     }
   }
@@ -53,7 +53,7 @@ class Viewer extends Component {
     const { ws, fileUrl } = this.state
     this.setState({ pageCount: pdf.numPages })
     ws.emit('fileLoad', PDF_LOAD_SUCCESS)
-    localStorage.setItem('fileUrl', JSON.stringify({ fileUrl, timeOut: getNowTime() }))
+    localStorage.setItem('fileUrl', JSON.stringify({ fileUrl, timeStamp: getNowTime() }))
   }
 
   handleRenderSuccess() {
