@@ -26,22 +26,25 @@ class Viewer extends Component {
   pageRef = null
 
   componentDidMount() {
-    this.connectWebSocket()
-    const localObj = JSON.parse(localStorage.getItem('fileUrl'))
-    if (localObj.timeStamp + LOCAL_STORAGE_TIMEOUT > getNowTime()) {
-      this.setState({ fileUrl: localObj.fileUrl })
-    }
+    this.initWebSocket()
   }
 
-  connectWebSocket() {
+  initWebSocket() {
     this.setState({ ws: webSocket(api.webSocket) }, () => {
       const { ws } = this.state
+      ws.on('getLatestFileIndex', (index, timeStamp) => {
+        if (timeStamp + LOCAL_STORAGE_TIMEOUT > getNowTime()) {
+          this.setFileUrl(index)
+        }
+      })
       ws.on('getPDFFile', res => {
         this.setFileUrl(res)
       })
       ws.on('connect', () => {
         this.setState({ isConnected: !!ws.connected })
       })
+      // Get latest file index while App start
+      ws.emit('getLatestFileIndex')
     })
   }
 
@@ -50,10 +53,9 @@ class Viewer extends Component {
   }
 
   handleDocumentLoadSuccess(pdf) {
-    const { ws, fileUrl } = this.state
+    const { ws } = this.state
     this.setState({ pageCount: pdf.numPages })
     ws.emit('fileLoad', PDF_LOAD_SUCCESS)
-    localStorage.setItem('fileUrl', JSON.stringify({ fileUrl, timeStamp: getNowTime() }))
   }
 
   handleRenderSuccess() {
@@ -98,12 +100,15 @@ class Viewer extends Component {
             renderAnnotationLayer={false}
             renderTextLayer={false} />
         </Document>
-        <Link to="/">
-          <img
-            src={HomeImg}
-            alt="icon"
-            className={"back-to-home-img" + (isConnected ? ' connected' : '')} />
-        </Link>
+        <div className="to-home-container">
+          <Link to="/">
+            <img
+              src={HomeImg}
+              alt="icon"
+              className={"back-to-home-img" + (isConnected ? ' connected' : '')} />
+          </Link>
+        </div>
+
       </div>
     )
   }

@@ -13,6 +13,8 @@ const getFileList = require('./src/getFileList')
 const dbAPIRouter = require('./router/db')
 
 const PORT = 5005
+let latestFileIndex = -1
+let latestFileIndexTimeStamp = 0
 
 // Init File list data
 const directoryPath = path.join(__dirname, '/pdfs/')
@@ -62,7 +64,15 @@ const io = socket(server)
 
 io.on('connection', socket => {
   console.log('success connect!')
+  socket.on('getLatestFileIndex', () => {
+    socket.emit('getLatestFileIndex', latestFileIndex, latestFileIndexTimeStamp)
+  })
   socket.on('getPDFFile', fileIndex => {
+    latestFileIndex = fileIndex
+    latestFileIndexTimeStamp = new Date().getTime()
     io.sockets.emit('getPDFFile', fileIndex)
+  })
+  socket.on('fileLoad', message => {
+    socket.broadcast.emit('fileLoad', message)
   })
 })
