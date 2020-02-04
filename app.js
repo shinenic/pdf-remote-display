@@ -7,10 +7,8 @@ const cors = require('cors')
 const fs = require('fs')
 const socket = require('socket.io')
 
-const { omitKeyInArray } = require('./utils/base')
+const { omitKeyInArray, isLocalMode } = require('./utils/base')
 const getFileList = require('./src/getFileList')
-
-const dbAPIRouter = require('./router/db')
 
 const PORT = 5005
 
@@ -20,9 +18,14 @@ let fileList = getFileList(directoryPath)
 let fileListWithoutPath = omitKeyInArray(fileList, 'path')
 
 
-// LOG & CORS
+// LOG
 app.use(logfmt.requestLogger())
-// app.use(cors())
+
+if(isLocalMode()){
+  app.use(cors())
+} else {
+  app.use('/api', require('./router/db'))
+}
 
 app.get('/api/pdffile', (req, res) => {
   const path = fileList[req.query.index].path
@@ -50,8 +53,6 @@ app.get(reactUrlPath, (req, res) => {
 })
 
 app.use(express.json())
-app.use('/api', dbAPIRouter)
-
 
 const port = Number(process.env.PORT || PORT)
 const server = http.Server(app).listen(port, () => {

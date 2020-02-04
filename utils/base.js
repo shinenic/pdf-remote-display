@@ -37,3 +37,8 @@ exports.dateFormat = (num, fmt) => {
     if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)))
   return fmt
 }
+
+exports.isLocalMode = () => {
+  // ['LOCAL', 'PRODUCTION']
+  return process.env.NODE_API_MODE === 'LOCAL'
+}

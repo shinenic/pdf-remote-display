@@ -1,9 +1,9 @@
-const isProdMode = () => {
-  // ['DEVELOPMENT', 'PRODUCTION']
-  return process.env.API_MODE === 'PRODUCTION'
+const isLocalMode = () => {
+  // ['LOCAL', 'PRODUCTION']
+  return process.env.REACT_APP_API_MODE === 'LOCAL'
 }
 
-const SERVER_URL = isProdMode() ? 'https://pdfviewer.kadenzwei.com' : 'http://localhost:5005'
+const SERVER_URL = isLocalMode() ? 'http://localhost:5005' : 'https://pdfviewer.kadenzwei.com'
 
 export const pdfjsWorkerSrc = version => `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${version}/pdf.worker.js`
 
