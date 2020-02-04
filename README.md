@@ -17,10 +17,14 @@
 
 * Client:
 > For Linux, macOS
-> cd client && REACT_APP_API_MODE=LOCAL 
+> cd client && REACT_APP_API_MODE=LOCAL npm start
 
-> For Windows
+> For Windows (cmd.exe)
 > cd client && set "REACT_APP_API_MODE=LOCAL" && npm start
+
+> For Windows (Powershell)
+> cd client; ($env:REACT_APP_API_MODE = "LOCAL") -and (npm start)
+
 
 * Server:
 > NODE_API_MODE=LOCAL npm run start
