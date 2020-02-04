@@ -1,6 +1,9 @@
-const CLIENT_URL = window.location.host // www.somedomain.com (includes port if there is one)
-// const SERVER_URL = 'http://localhost:5005'
-const SERVER_URL = 'https://pdfviewer.kadenzwei.com'
+const isProdMode = () => {
+  // ['DEVELOPMENT', 'PRODUCTION']
+  return process.env.API_MODE === 'PRODUCTION'
+}
+
+const SERVER_URL = isProdMode() ? 'https://pdfviewer.kadenzwei.com' : 'http://localhost:5005'
 
 export const pdfjsWorkerSrc = version => `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${version}/pdf.worker.js`
 
