@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import classNames from 'classnames'
 
 import HomeImg from "../img/home.svg"
 import CrossImg from "../img/cross.svg"
@@ -46,8 +47,7 @@ class SearchInput extends Component {
           <img
             src={HomeImg}
             alt="icon"
-            className="home-img"
-            className={'home-img' + (isConnectedSocket ? ' connected' : '')}
+            className={classNames('home-img', { 'connected': isConnectedSocket })}
             onClick={backToHome} />
         </div>
         <div className="icon-container icon-container--right">

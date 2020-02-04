@@ -9,7 +9,7 @@ import NoResultHint from './NoResultHint'
 import matchSorter from 'match-sorter'
 import { api } from '../config/index'
 
-import { SEARCH_MODE_TYPE, SEARCH_RESULT_TYPE } from '../constants/index'
+import { SEARCH_MODE_TYPE, SEARCH_RESULT_TYPE, PDF_LOAD_SUCCESS } from '../constants/index'
 import songListData from '../data/songSearch'
 import { clearAllBlank, isZhuyin, getUrlPath, getUrlQueryParams } from '../utils/base'
 
@@ -30,7 +30,8 @@ class Search extends Component {
       data: [],
       ws: null,
       isConnectedSocket: false,
-      selectedIndex: -1
+      selectedIndex: -1,
+      isPDFLoadSuccess: false
     }
   }
 
@@ -80,11 +81,14 @@ class Search extends Component {
   connectWebSocket() {
     this.setState({ ws: webSocket(api.webSocket) }, () => {
       const { ws } = this.state
-      ws.on('getPDFFile', index => {
-        this.setState({ selectedIndex: index })
-      })
       ws.on('connect', () => {
         this.setState({ isConnectedSocket: !!ws.connected })
+      })
+      ws.on('fileLoad', message => {
+        this.setState({ isPDFLoadSuccess: message === PDF_LOAD_SUCCESS })
+      })
+      ws.on('getPDFFile', index => {
+        this.setState({ selectedIndex: index, isPDFLoadSuccess: false })
       })
     })
   }
@@ -187,7 +191,8 @@ class Search extends Component {
       isConnectedSocket,
       currentCount,
       searchMode,
-      selectedIndex
+      selectedIndex,
+      isPDFLoadSuccess
     } = this.state
     const isNoResult = result.length === 0
 
@@ -208,6 +213,7 @@ class Search extends Component {
           currentCount={currentCount}
           searchMode={searchMode}
           selectedIndex={selectedIndex}
+          isPDFLoadSuccess={isPDFLoadSuccess}
           sendFileIndex={index => this.sendFileIndex(index)}
           findArtist={str => this.findArtist(str)}/>
         {isNoResult && <NoResultHint displayMode={this.getDisplayMode()} />}

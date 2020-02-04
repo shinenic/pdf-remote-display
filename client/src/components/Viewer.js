@@ -5,21 +5,19 @@ import { Link } from 'react-router-dom'
 import { pdfjs } from 'react-pdf'
 import { Document, Page } from 'react-pdf'
 
-import { RENDER_SIZE_BY_HEIGHT, RENDER_SIZE_BY_WIDTH } from '../constants'
-import { getViewport } from '../utils/base'
-import { pdfjsWorkerSrc, samepleFile, api } from '../config'
+import { RENDER_SIZE_BY_HEIGHT, RENDER_SIZE_BY_WIDTH, PDF_LOAD_SUCCESS } from '../constants'
+import { getViewport, getNowTime } from '../utils/base'
+import { getPdfjsWorkerSrc, api } from '../config'
 import HomeImg from "../img/home.svg"
 
-pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorkerSrc(pdfjs.version)
-
-// TODO: Render pdf canvas according to width or height
-// TODO: Add float buttun on top side (which can link to home page)
+const LOCAL_STORAGE_TIMEOUT = 3600000 // One hour
+pdfjs.GlobalWorkerOptions.workerSrc = getPdfjsWorkerSrc(pdfjs.version)
 
 class Viewer extends Component {
   state = {
     pageCount: null,
     pageNumber: 1,
-    pdfDisplayMode: RENDER_SIZE_BY_HEIGHT, // RENDER_SIZE_BY_WIDTH
+    pdfDisplayMode: RENDER_SIZE_BY_HEIGHT,
     ws: null,
     fileUrl: '',
     isConnected: false
@@ -28,29 +26,36 @@ class Viewer extends Component {
   pageRef = null
 
   componentDidMount() {
-    this.connectWebSocket()
+    this.initWebSocket()
   }
 
-  connectWebSocket() {
+  initWebSocket() {
     this.setState({ ws: webSocket(api.webSocket) }, () => {
       const { ws } = this.state
+      ws.on('getLatestFileIndex', (index, timeStamp) => {
+        if (timeStamp + LOCAL_STORAGE_TIMEOUT > getNowTime()) {
+          this.setFileUrl(index)
+        }
+      })
       ws.on('getPDFFile', res => {
         this.setFileUrl(res)
       })
       ws.on('connect', () => {
         this.setState({ isConnected: !!ws.connected })
       })
+      // Get latest file index while App start
+      ws.emit('getLatestFileIndex')
     })
   }
 
   setFileUrl(index) {
-    this.setState({
-      fileUrl: `${api.getPdfFile}?index=${index}`
-    })
+    this.setState({ fileUrl: `${api.getPdfFile}?index=${index}` })
   }
 
   handleDocumentLoadSuccess(pdf) {
+    const { ws } = this.state
     this.setState({ pageCount: pdf.numPages })
+    ws.emit('fileLoad', PDF_LOAD_SUCCESS)
   }
 
   handleRenderSuccess() {
@@ -84,7 +89,6 @@ class Viewer extends Component {
         <Document
           file={fileUrl}
           className="pdf-container"
-          inputRef={(ref) => { this.myDoc = ref }}
           onLoadSuccess={pdf => this.handleDocumentLoadSuccess(pdf)}>
           <Page
             pageNumber={pageNumber}
@@ -92,15 +96,19 @@ class Viewer extends Component {
             height={canvasHeight}
             width={canvasWidth}
             onRenderSuccess={() => this.handleRenderSuccess()}
+            /* Reduce redundant html elements */
             renderAnnotationLayer={false}
             renderTextLayer={false} />
         </Document>
-        <Link to="/">
-          <img
-            src={HomeImg}
-            alt="icon"
-            className={"back-to-home-img" + (isConnected ? ' connected' : '')} />
-        </Link>
+        <div className="to-home-container">
+          <Link to="/">
+            <img
+              src={HomeImg}
+              alt="icon"
+              className={"back-to-home-img" + (isConnected ? ' connected' : '')} />
+          </Link>
+        </div>
+
       </div>
     )
   }

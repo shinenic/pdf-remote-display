@@ -12,3 +12,5 @@ export const SEARCH_MODE_TYPE = {
 export const RENDER_SIZE_BY_HEIGHT = 'renderSizeByHeight'
 
 export const RENDER_SIZE_BY_WIDTH = 'renderSizeByWidth'
+
+export const PDF_LOAD_SUCCESS = 'PDF_LOAD_SUCCESS'
