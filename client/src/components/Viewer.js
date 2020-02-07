@@ -22,7 +22,6 @@ class Viewer extends Component {
     fileUrl: '',
     isConnected: false
   }
-
   pageRef = null
 
   componentDidMount() {
@@ -53,12 +52,12 @@ class Viewer extends Component {
   }
 
   setFileUrl(index) {
-    this.setState({ fileUrl: `${api.getPdfFile}?index=${index}` })
+    this.setState({ fileUrl: `${api.getPdfFile}?index=${index}`, pageNumber: 1 })
   }
 
   handleDocumentLoadSuccess(pdf) {
     const { ws } = this.state
-    this.setState({ pageCount: pdf.numPages, pageNumber: 1 })
+    this.setState({ pageCount: pdf.numPages })
     ws.emit('fileLoad', PDF_LOAD_SUCCESS)
   }
 
@@ -67,6 +66,7 @@ class Viewer extends Component {
     const viewport = getViewport()
     const canvasWidth = this.pageRef.firstChild.style.width.replace('px', '')
     const canvasHeight = this.pageRef.firstChild.style.height.replace('px', '')
+    // Check PDF size and rerender if needed
     if (canvasWidth > viewport.width && pdfDisplayMode === RENDER_SIZE_BY_HEIGHT) {
       this.setState({ pdfDisplayMode: RENDER_SIZE_BY_WIDTH })
     } else if (canvasHeight > viewport.height && pdfDisplayMode === RENDER_SIZE_BY_WIDTH) {
@@ -74,12 +74,26 @@ class Viewer extends Component {
     }
   }
 
-  handleOnClick() {
-    const { pageCount, pageNumber } = this.state
+  handleOnClick(e) {
+    const { pageCount } = this.state
     if (pageCount === 1) return null
-    this.setState({
-      pageNumber: pageCount === pageNumber ? 1 : pageNumber + 1
-    })
+    
+    const viewport = getViewport()
+    if(e.clientX > viewport.width / 2) {
+      this.goNextPage()
+    } else {
+      this.goPrevPage()
+    }
+  }
+
+  goNextPage() {
+    const { pageCount, pageNumber } = this.state
+    this.setState({ pageNumber: pageNumber === pageCount ? 1 : pageNumber + 1 })
+  }
+
+  goPrevPage() {
+    const { pageCount, pageNumber } = this.state
+    this.setState({ pageNumber: pageNumber === 1 ? pageCount : pageNumber - 1 })
   }
 
   render() {
@@ -89,7 +103,7 @@ class Viewer extends Component {
     const canvasWidth = pdfDisplayMode === RENDER_SIZE_BY_WIDTH ? viewport.width : null
 
     return (
-      <div className="viewer" onClick={() => this.handleOnClick()}>
+      <div className="viewer" onClick={e => this.handleOnClick(e)}>
         <Document
           file={fileUrl}
           className="pdf-container"
