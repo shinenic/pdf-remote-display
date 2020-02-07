@@ -7,10 +7,11 @@ const cors = require('cors')
 const fs = require('fs')
 const socket = require('socket.io')
 
-const { omitKeyInArray, isLocalMode } = require('./utils/base')
+const { omitKeyInArray, isLocalMode, getNowTime } = require('./utils/base')
 const getFileList = require('./src/getFileList')
 
 const PORT = 5005
+let nodeAPIMode
 let latestFileIndex = -1
 let latestFileIndexTimeStamp = 0
 
@@ -25,8 +26,10 @@ app.use(logfmt.requestLogger())
 
 if(isLocalMode()){
   app.use(cors())
+  nodeAPIMode = 'LOCAL' 
 } else {
   app.use('/api', require('./router/db'))
+  nodeAPIMode = 'PRODUCTION' 
 }
 
 app.get('/api/pdffile', (req, res) => {
@@ -58,19 +61,19 @@ app.use(express.json())
 
 const port = Number(process.env.PORT || PORT)
 const server = http.Server(app).listen(port, () => {
-  console.log("Listening on " + port)
+  console.log(`Listening on port ${port}, "${nodeAPIMode}" mode`)
 })
 
 const io = socket(server)
 
 io.on('connection', socket => {
-  console.log('success connect!')
   socket.on('getLatestFileIndex', () => {
     socket.emit('getLatestFileIndex', latestFileIndex, latestFileIndexTimeStamp)
   })
   socket.on('getPDFFile', fileIndex => {
+    // TODO: make it as a obj
     latestFileIndex = fileIndex
-    latestFileIndexTimeStamp = new Date().getTime()
+    latestFileIndexTimeStamp = getNowTime()
     io.sockets.emit('getPDFFile', fileIndex)
   })
   socket.on('fileLoad', message => {

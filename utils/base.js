@@ -40,5 +40,13 @@ exports.dateFormat = (num, fmt) => {
 
 exports.isLocalMode = () => {
   // ['LOCAL', 'PRODUCTION']
-  return process.env.NODE_API_MODE === 'LOCAL'
+  if(process.env.NODE_API_MODE) {
+    return process.env.NODE_API_MODE === 'LOCAL'
+  } else {
+    return true
+  }
+}
+
+exports.getNowTime = () => {
+  return new Date().getTime()
 }
