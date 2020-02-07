@@ -11,7 +11,7 @@ import { api } from '../config/index'
 
 import { SEARCH_MODE_TYPE, SEARCH_RESULT_TYPE, PDF_LOAD_SUCCESS } from '../constants/index'
 import songListData from '../data/songSearch'
-import { clearAllBlank, isZhuyin, getUrlPath, getUrlQueryParams } from '../utils/base'
+import { clearAllBlank, isZhuyin, getUrlPath, getUrlQueryParams, getUrlWithMergedParams } from '../utils/base'
 
 const INIT_RESULT_COUNT = 20
 const ADD_RESULT_COUNT = 50
@@ -139,22 +139,17 @@ class Search extends Component {
     const { incognito } = this.state
     const content = clearAllBlank(str)
     const { history } = this.state
-    const keywordParam = `s=${content}`
-    const incognitoParam = incognito ? '&incognito=true' : ''
-    const [pathname] = getUrlPath()
     // If the input(removed all blank) is not empty
     // , the last character is not Zhuyin and have no duplicated history
     if (!isZhuyin(content.slice(-1)) && content !== '' && (history.length === 0 || str !== history[0])) {
       this.setState({ history: [content, ...history] })
-      this.props.history.push(encodeURI(`${pathname}?${keywordParam}${incognitoParam}`))
+      this.props.history.push(getUrlWithMergedParams(undefined, { s: content, incognito }))
       !incognito && this.saveToDatabase(api.addHistory, content)
     }
   }
 
   // TODO: Add polyfill for smooth scrollTop
   clearInputText() {
-    const { incognito } = this.state
-    const [pathname] = getUrlPath()
     if (this.state.inputText !== '') {
       // It will update inputText only but result
       this.setState({ inputText: '' })
@@ -162,11 +157,11 @@ class Search extends Component {
     } else {
       this.setState({ result: [], isCleaned: true })
     }
-    this.props.history.push(incognito ? pathname + '?incognito=true' : pathname)
+    this.props.history.push(getUrlWithMergedParams(undefined, { s: '' }))
   }
 
   backToHome() {
-    this.props.history.push('/')
+    this.props.history.push(getUrlWithMergedParams('/', { s: '' }))
   }
 
   findArtist(artist) {
@@ -215,7 +210,7 @@ class Search extends Component {
           selectedIndex={selectedIndex}
           isPDFLoadSuccess={isPDFLoadSuccess}
           sendFileIndex={index => this.sendFileIndex(index)}
-          findArtist={str => this.findArtist(str)}/>
+          findArtist={str => this.findArtist(str)} />
         {isNoResult && <NoResultHint displayMode={this.getDisplayMode()} />}
       </div>
     )
