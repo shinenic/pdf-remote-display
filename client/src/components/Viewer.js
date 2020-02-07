@@ -32,20 +32,24 @@ class Viewer extends Component {
   initWebSocket() {
     this.setState({ ws: webSocket(api.webSocket) }, () => {
       const { ws } = this.state
-      ws.on('getLatestFileIndex', (index, timeStamp) => {
-        if (timeStamp + LOCAL_STORAGE_TIMEOUT > getNowTime()) {
-          this.setFileUrl(index)
-        }
-      })
-      ws.on('getPDFFile', res => {
-        this.setFileUrl(res)
-      })
-      ws.on('connect', () => {
-        this.setState({ isConnected: !!ws.connected })
-      })
-      // Get latest file index while App start
-      ws.emit('getLatestFileIndex')
+      this.initWebSocketActions(ws)
     })
+  }
+
+  initWebSocketActions(ws) {
+    ws.on('getLatestFileIndex', (index, timeStamp) => {
+      if (timeStamp + LOCAL_STORAGE_TIMEOUT > getNowTime()) {
+        this.setFileUrl(index)
+      }
+    })
+    ws.on('getPDFFile', res => {
+      this.setFileUrl(res)
+    })
+    ws.on('connect', () => {
+      this.setState({ isConnected: !!ws.connected })
+    })
+    // Get latest file index while App start
+    ws.emit('getLatestFileIndex')
   }
 
   setFileUrl(index) {
@@ -54,7 +58,7 @@ class Viewer extends Component {
 
   handleDocumentLoadSuccess(pdf) {
     const { ws } = this.state
-    this.setState({ pageCount: pdf.numPages })
+    this.setState({ pageCount: pdf.numPages, pageNumber: 1 })
     ws.emit('fileLoad', PDF_LOAD_SUCCESS)
   }
 
