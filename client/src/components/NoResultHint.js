@@ -1,9 +1,9 @@
 import React from 'react'
 import { SEARCH_RESULT_TYPE } from '../constants/index'
 
-const NoResultHint = ({displayMode}) => {
+const NoResultHint = ({ displayMode }) => {
   const getText = mode => {
-    switch(mode){
+    switch (mode) {
       case SEARCH_RESULT_TYPE.NO_RESULT:
         return 'Nothing Found.'
       case SEARCH_RESULT_TYPE.NO_KEYWORD:
