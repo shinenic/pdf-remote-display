@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import webSocket from 'socket.io-client'
 import { Link } from 'react-router-dom'
+import classNames from 'classnames'
 
 import { pdfjs } from 'react-pdf'
 import { Document, Page } from 'react-pdf'
@@ -9,6 +10,7 @@ import { RENDER_SIZE_BY_HEIGHT, RENDER_SIZE_BY_WIDTH, PDF_LOAD_SUCCESS } from '.
 import { getViewport, getNowTime } from '../utils/base'
 import { getPdfjsWorkerSrc, api } from '../config'
 import HomeImg from "../img/home.svg"
+import Spinner from './common/spinner'
 
 const LOCAL_STORAGE_TIMEOUT = 3600000 // One hour
 pdfjs.GlobalWorkerOptions.workerSrc = getPdfjsWorkerSrc(pdfjs.version)
@@ -77,9 +79,9 @@ class Viewer extends Component {
   handleOnClick(e) {
     const { pageCount } = this.state
     if (pageCount === 1) return null
-    
+
     const viewport = getViewport()
-    if(e.clientX > viewport.width / 2) {
+    if (e.clientX > viewport.width / 2) {
       this.goNextPage()
     } else {
       this.goPrevPage()
@@ -94,6 +96,17 @@ class Viewer extends Component {
   goPrevPage() {
     const { pageCount, pageNumber } = this.state
     this.setState({ pageNumber: pageNumber === 1 ? pageCount : pageNumber - 1 })
+  }
+
+  renderStatus() {
+    return (
+      <div className="viewer__pdf-status">
+        <Spinner />
+        <span className="viewer__pdf-status__description">
+          File Loading...
+          </span>
+      </div>
+    )
   }
 
   render() {
@@ -123,10 +136,10 @@ class Viewer extends Component {
             <img
               src={HomeImg}
               alt="icon"
-              className={"back-to-home-img" + (isConnected ? ' connected' : '')} />
+              className={classNames('back-to-home-img', { 'connected': isConnected })} />
           </Link>
         </div>
-
+        {/* {this.renderStatus()} */}
       </div>
     )
   }

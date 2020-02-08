@@ -2,6 +2,21 @@
   width: 100%;
   height: 100%;
   background-color: #CCC;
+  position: relative;
+  
+
+  &__pdf-status {
+    position: absolute;
+    top: 42%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+
+    &__description {
+      margin-top: 20px;
+      display: block;
+    }
+  }
 
   & canvas {
     position: absolute;

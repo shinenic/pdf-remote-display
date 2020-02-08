@@ -9,6 +9,16 @@ export const SEARCH_MODE_TYPE = {
   SONG_LIST: 'songlist'
 }
 
+export const PDF_STATUS = {
+  IDLE: 'IDLE',
+  ERROR: 'ERROR',
+  ON_LOAD: 'ON_LOAD',
+  ON_LOAD_ERROR: 'ON_LOAD_ERROR',
+  ON_LOAD_SUCCESS: 'ON_LOAD_SUCCESS',
+  ON_SOURCE_ERROR: 'ON_SOURCE_ERROR',
+  ON_RENDER_SUCCESS: 'ON_RENDER_SUCCESS',
+}
+
 export const RENDER_SIZE_BY_HEIGHT = 'renderSizeByHeight'
 
 export const RENDER_SIZE_BY_WIDTH = 'renderSizeByWidth'

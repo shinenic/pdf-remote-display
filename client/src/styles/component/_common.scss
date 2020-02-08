@@ -1,0 +1,11 @@
+.loading-spinner {
+  height: 48px;
+  width: 48px;
+  color: #5a5a5a;
+  position: relative;
+  display: inline-block;
+  border: 5px solid;
+  border-radius: 50%;
+  border-top-color: transparent;
+  @extend %spinRotate;
+}

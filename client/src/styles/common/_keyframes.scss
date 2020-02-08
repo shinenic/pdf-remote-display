@@ -9,6 +9,19 @@
   }
 }
 
-%fadeIn{
+%fadeIn {
   animation: FadeIn 0.8s 1 both;
+}
+
+@keyframes SpinRotate {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+%spinRotate {
+  animation: SpinRotate 1s linear infinite;
 }
