@@ -9,3 +9,26 @@
   border-top-color: transparent;
   @extend %spinRotate;
 }
+
+.error-cross {
+  position: relative;
+  width: 48px;
+  height: 48px;
+
+  &:before, &:after {
+    position: absolute;
+    left: 42px;
+    content: ' ';
+    height: 50px;
+    width: 7px;
+    background-color: #5a5a5a;
+  }
+
+  &:before {
+    transform: rotate(45deg);
+  }
+
+  &:after {
+    transform: rotate(-45deg);
+  }
+}

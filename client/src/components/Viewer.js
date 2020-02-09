@@ -11,6 +11,7 @@ import { getViewport, getNowTime } from '../utils/base'
 import { getPdfjsWorkerSrc, api } from '../config'
 import HomeImg from "../img/home.svg"
 import Spinner from './common/spinner'
+import Cross from './common/cross'
 
 const LOCAL_STORAGE_TIMEOUT = 3600000 // One hour
 pdfjs.GlobalWorkerOptions.workerSrc = getPdfjsWorkerSrc(pdfjs.version)
@@ -101,10 +102,21 @@ class Viewer extends Component {
   renderStatus() {
     return (
       <div className="viewer__pdf-status">
+        <Cross />
+        <span className="viewer__pdf-status__description">
+          File Loading...
+        </span>
+      </div>
+    )
+  }
+
+  test() {
+    return (
+      <div className="viewer__pdf-status">
         <Spinner />
         <span className="viewer__pdf-status__description">
           File Loading...
-          </span>
+        </span>
       </div>
     )
   }
@@ -119,7 +131,10 @@ class Viewer extends Component {
       <div className="viewer" onClick={e => this.handleOnClick(e)}>
         <Document
           file={fileUrl}
+          // file={''}
           className="pdf-container"
+          // noData={this.renderStatus()}
+          // onLoadSuccess={this.test()}
           onLoadSuccess={pdf => this.handleDocumentLoadSuccess(pdf)}>
           <Page
             pageNumber={pageNumber}
@@ -131,6 +146,7 @@ class Viewer extends Component {
             renderAnnotationLayer={false}
             renderTextLayer={false} />
         </Document>
+        
         <div className="to-home-container">
           <Link to="/">
             <img
