@@ -7,7 +7,7 @@
 ### Startup server in Production mode (after react app built)
 
 > For Linux, macOS
-> cd client && npm build && cd .. && NODE_API_MODE=PRODUCTION npm run start
+> cd client && npm build && cd .. && pm2 start pm2.config.js --name PdfViewer
 
 > For Windows
 > cd client && npm build && cd .. && set "NODE_API_MODE=PRODUCTION" npm run start
