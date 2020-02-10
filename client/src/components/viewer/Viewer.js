@@ -6,12 +6,11 @@ import classNames from 'classnames'
 import { pdfjs } from 'react-pdf'
 import { Document, Page } from 'react-pdf'
 
-import { RENDER_SIZE_BY_HEIGHT, RENDER_SIZE_BY_WIDTH, SOCKET_EVENT } from '../constants'
-import { getViewport, getNowTime } from '../utils/base'
-import { getPdfjsWorkerSrc, api } from '../config'
-import HomeImg from "../img/home.svg"
-import Spinner from './common/spinner'
-import Cross from './common/cross'
+import { RENDER_SIZE_BY_HEIGHT, RENDER_SIZE_BY_WIDTH, SOCKET_EVENT } from '../../constants'
+import { getViewport, getNowTime } from '../../utils/base'
+import { getPdfjsWorkerSrc, api } from '../../config'
+import HomeImg from "../../img/home.svg"
+import ViewerStatus from './Status'
 
 const LOCAL_STORAGE_TIMEOUT = 3600000 // One hour
 pdfjs.GlobalWorkerOptions.workerSrc = getPdfjsWorkerSrc(pdfjs.version)
@@ -98,28 +97,6 @@ class Viewer extends Component {
     this.setState({ pageNumber: pageNumber === 1 ? pageCount : pageNumber - 1 })
   }
 
-  renderStatus() {
-    return (
-      <div className="viewer__pdf-status">
-        <Cross />
-        <span className="viewer__pdf-status__description">
-          File Loading...
-        </span>
-      </div>
-    )
-  }
-
-  test() {
-    return (
-      <div className="viewer__pdf-status">
-        <Spinner />
-        <span className="viewer__pdf-status__description">
-          File Loading...
-        </span>
-      </div>
-    )
-  }
-
   render() {
     const { pageNumber, fileUrl, isConnected, pdfDisplayMode } = this.state
     const viewport = getViewport()
@@ -130,10 +107,10 @@ class Viewer extends Component {
       <div className="viewer" onClick={e => this.handleOnClick(e)}>
         <Document
           file={fileUrl}
-          // file={''}
           className="pdf-container"
-          // noData={this.renderStatus()}
-          // onLoadSuccess={this.test()}
+          noData={ViewerStatus('noData')}
+          loading={ViewerStatus('loading')}
+          error={ViewerStatus('error')}
           onLoadSuccess={pdf => this.handleDocumentLoadSuccess(pdf)}>
           <Page
             pageNumber={pageNumber}

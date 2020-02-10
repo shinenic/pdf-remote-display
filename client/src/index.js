@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 import './styles/index.scss'
 import Home from './components/Home'
 import Search from './components/Search'
-import Viewer from './components/Viewer'
+import Viewer from './components/viewer/Viewer'
 import * as serviceWorker from './serviceWorker'
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
 

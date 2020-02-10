@@ -12,13 +12,15 @@
 
 .error-cross {
   position: relative;
+  left: -20px;
   width: 48px;
   height: 48px;
 
-  &:before, &:after {
+  &:before,
+  &:after {
     position: absolute;
     left: 42px;
-    content: ' ';
+    content: " ";
     height: 50px;
     width: 7px;
     background-color: #5a5a5a;
@@ -30,5 +32,20 @@
 
   &:after {
     transform: rotate(-45deg);
+  }
+}
+
+.info-icon {
+  height: 3rem;
+  width: 3rem;
+
+  & img {
+    position: relative;
+    left: 7px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    filter: invert(0.2);
   }
 }
