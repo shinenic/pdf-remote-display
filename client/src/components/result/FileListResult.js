@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import DoubleTap from '../common/doubleTap'
 
 const FileListResult = ({
-  data: { name: fileName, locatedFolder, index },
+  fileName, locatedFolder, index,
   sendFileIndex,
   selected,
   isPDFLoadSuccess

@@ -1,10 +1,8 @@
 import React from 'react'
 import DoubleTap from '../common/doubleTap'
 
-const SongListResult = ({ data, findArtist }) => {
+const SongListResult = ({ findArtist, title, artist, volume, page }) => {
 
-  const [title, artist, volume, page] = data
-  
   const getFieldText = () => {
     /*
      * If no artist data                       =>  Replace artist text with "-"

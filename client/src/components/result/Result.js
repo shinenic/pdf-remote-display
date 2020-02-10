@@ -16,20 +16,27 @@ const Result = ({
   const view = result.slice(0, currentCount).map((data, index) => {
     switch (searchMode) {
       case SEARCH_MODE_TYPE.FILE_LIST:
+        const [pdfIndex, fileName, locatedFolder] = data
         return (
           <FileListResult
             key={index}
-            data={data}
-            selected={data.index === selectedIndex}
+            index={pdfIndex}
+            fileName={fileName}
+            locatedFolder={locatedFolder}
+            selected={pdfIndex === selectedIndex}
             isPDFLoadSuccess={isPDFLoadSuccess}
             sendFileIndex={index => sendFileIndex(index)} />
         )
       case SEARCH_MODE_TYPE.SONG_LIST:
+        const [title, artist, volume, page] = data
         return (
           <SongListResult
             key={index}
-            data={data}
-            findArtist={() => findArtist(data[1])} />
+            title={title}
+            artist={artist}
+            volume={volume}
+            page={page}
+            findArtist={() => findArtist(artist)} />
         )
       default:
         return null
