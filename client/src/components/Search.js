@@ -85,21 +85,11 @@ class Search extends Component {
   connectWebSocket() {
     this.setState({ ws: webSocket(api.webSocket) }, () => {
       const { ws } = this.state
-      // ws.on('connect', () => {
-      //   this.setState({ isConnectedSocket: !!ws.connected })
-      // })
-      // ws.on('fileLoad', message => {
-      //   this.setState({ isPDFLoadSuccess: message === PDF_LOAD_SUCCESS })
-      // })
-      // ws.on('getPDFFile', index => {
-      //   this.setState({ selectedIndex: index, isPDFLoadSuccess: false })
-      // })
-
       const { VIEWER_STATUA } = SOCKET_EVENT
       ws.on('connect', () => {
         this.setState({ isConnectedSocket: !!ws.connected })
       })
-      ws.on('viewerStatus', status => { // 改在viewer stauts 實現
+      ws.on('viewerStatus', status => {
         this.setState({ isPDFLoadSuccess: status === VIEWER_STATUA.PDF_LOAD_SUCCESS })
       })
       ws.on('fileIndex', file => {
@@ -111,7 +101,6 @@ class Search extends Component {
   sendFileIndex(index) {
     const { FILE_INDEX } = SOCKET_EVENT
     this.state.ws.emit('fileIndex', { action: FILE_INDEX.SET_FILE_INDEX, index })
-    // this.state.ws.emit('getPDFFile', index)
   }
 
   // TODO: When scroll down to specific position, it will show a icon and auto scroll to top after clicked
@@ -207,12 +196,16 @@ class Search extends Component {
     } = this.state
     const isNoResult = result.length === 0
 
+    const placeHolderText = searchMode === SEARCH_MODE_TYPE.FILE_LIST
+      ? 'Search for PDF file' : 'Title / Artist / Volume'
+
     return (
       <div className="search-container">
         <div style={{ height: '35px' }} />
         <TopCard
           inputText={inputText}
           isCleaned={isCleaned}
+          placeHolderText={placeHolderText}
           clearInputText={() => this.clearInputText()}
           updateInputText={str => this.updateInputText(str)}
           search={str => this.search(str)}

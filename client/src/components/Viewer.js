@@ -39,22 +39,7 @@ class Viewer extends Component {
   }
 
   initWebSocketActions(ws) {
-    // ws.on('getLatestFileIndex', (index, timeStamp) => {
-    //   if (timeStamp + LOCAL_STORAGE_TIMEOUT > getNowTime()) {
-    //     this.setFileUrl(index)
-    //   }
-    // })
-    // ws.on('getPDFFile', res => {
-    //   this.setFileUrl(res)
-    // })
-    // ws.on('connect', () => {
-    //   this.setState({ isConnected: !!ws.connected })
-    // })
-    // // Get latest file index while App start
-    // ws.emit('getLatestFileIndex')
-
     const { FILE_INDEX } = SOCKET_EVENT
-
     ws.on('connect', () => {
       this.setState({ isConnected: !!ws.connected })
     })
@@ -63,7 +48,6 @@ class Viewer extends Component {
         this.setFileUrl(file.index)
       }
     })
-
     // Get latest file index while App start
     ws.emit('fileIndex', { action: FILE_INDEX.GET_FILE })
   }

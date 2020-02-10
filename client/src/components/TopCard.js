@@ -31,13 +31,20 @@ class SearchInput extends Component {
   }
 
   render() {
-    const { inputText, isCleaned, clearInputText, backToHome, isConnectedSocket } = this.props
+    const {
+      inputText,
+      isCleaned,
+      clearInputText,
+      backToHome,
+      isConnectedSocket,
+      placeHolderText
+    } = this.props
     return (
       <div className="search-card">
         <input
           className="search-card__input"
           type="text"
-          placeholder="Title / Artist / Volume"
+          placeholder={placeHolderText}
           value={inputText}
           onChange={e => this.handleChange(e)}
           onKeyUp={() => this.handleKeyUp()}

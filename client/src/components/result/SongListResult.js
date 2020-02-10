@@ -30,11 +30,11 @@ const SongListResult = ({ findArtist, title, artist, volume, page }) => {
       <DoubleTap
         className={'column-title'}
         content={fieldText.title}
-        doubleTapEvent={() => connectToYoutube()} />
+        doubleTapEvent={connectToYoutube} />
       <DoubleTap
         className={'column-artist'}
         content={fieldText.artist}
-        doubleTapEvent={() => findArtist()} />
+        doubleTapEvent={findArtist} />
       <div className="column-position">{fieldText.position}</div>
     </div>
   )

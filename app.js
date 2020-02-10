@@ -14,12 +14,11 @@ const { SOCKET_EVENT } = require('./constants/index')
 const PORT = 5005
 let nodeAPIMode
 let latestFile = { index: -1, timeStamp: 0 }
-let latestFileIndex = -1
-let latestFileIndexTimeStamp = 0
 
 // Init File list data
 const directoryPath = path.join(__dirname, '/pdfs/')
 let fileList = getFileList(directoryPath)
+// To Reduce json file size (for client only)
 let fileListForClient = getFileListForClient(fileList)
 
 
@@ -71,23 +70,7 @@ const server = http.Server(app).listen(port, () => {
 const io = socket(server)
 
 io.on('connection', socket => {
-  // socket.on('getLatestFileIndex', () => {
-  //   socket.emit('getLatestFileIndex', latestFileIndex, latestFileIndexTimeStamp)
-  // })
-  // socket.on('getPDFFile', fileIndex => {
-  //   // TODO: make it as a obj
-  //   latestFileIndex = fileIndex
-  //   latestFileIndexTimeStamp = getNowTime()
-  //   io.sockets.emit('getPDFFile', fileIndex)
-  // })
-  // socket.on('fileLoad', message => {
-  //   socket.broadcast.emit('fileLoad', message)
-  // })
-
-  // Refactor custom socket event
   socket.on('viewerStatus', status => {
-    // status = status
-    // PDF_LOAD_SUCCESS, PDF_LOAD_FAIL, VIEWER_IDLE
     const { VIEWER_STATUA } = SOCKET_EVENT
     switch (status) {
       case VIEWER_STATUA.PDF_LOAD_SUCCESS:
