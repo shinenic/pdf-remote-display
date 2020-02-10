@@ -93,9 +93,6 @@ io.on('connection', socket => {
       case FILE_INDEX.GET_FILE:
         io.sockets.emit('fileIndex', latestFile)
         break
-      default:
-        console.log(latestFile)
-        break
     }
   })
 })

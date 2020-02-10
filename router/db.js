@@ -51,12 +51,14 @@ router.get('/pdf/part', (req, res) => {
 
 // POST ONE HISTORY
 router.post('/:collectionName', (req, res) => {
-  let { date, content } = req.body
+  // let { date, content } = req.body
+  const { content } = req.body
+  const date = Date.now().toString()
   if (content === undefined) {
     res.send('"content" format error.')
   }
   else {
-    if (date === undefined) date = Date.now().toString()
+    // if (date === undefined) date = Date.now().toString()
     db.collection(COLLECTION_NAME).insertOne({ date, content }, (err) => {
       if (err) return res.send('Insert failed.')
       console.log("Insert success")

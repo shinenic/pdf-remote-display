@@ -1,7 +1,7 @@
 const isLocalMode = () => {
   // ['LOCAL', 'PRODUCTION']
   // return false
-  return process.env.REACT_APP_API_MODE == 'LOCAL'
+  return process.env.REACT_APP_API_MODE === 'LOCAL'
 }
 
 const SERVER_URL = isLocalMode() ? 'http://localhost:5005' : 'https://pdfviewer.kadenzwei.com'

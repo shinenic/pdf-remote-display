@@ -137,7 +137,7 @@ class Search extends Component {
   }
 
   saveToDatabase(dbUrl, content) {
-    axios.post(dbUrl, { "content": content }).catch(err => console.error(err))
+    axios.post(dbUrl, { "content": content, "date": undefined }).catch(err => console.error(err))
   }
 
   addHistory(str) {
