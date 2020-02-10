@@ -19,8 +19,19 @@ export const PDF_STATUS = {
   ON_RENDER_SUCCESS: 'ON_RENDER_SUCCESS',
 }
 
+export const SOCKET_EVENT = {
+  VIEWER_STATUA: {
+    PDF_LOAD_SUCCESS: 'PDF_LOAD_SUCCESS',
+    PDF_LOAD_FAIL: 'PDF_LOAD_FAIL',
+    VIEWER_IDLE: 'VIEWER_IDLE'
+  },
+  FILE_INDEX: {
+    SET_FILE_INDEX: 'SET_FILE_INDEX',
+    GET_FILE: 'GET_FILE',
+    GET_LATEST_FILE: 'GET_LATEST_FILE'
+  }
+}
+
 export const RENDER_SIZE_BY_HEIGHT = 'renderSizeByHeight'
 
 export const RENDER_SIZE_BY_WIDTH = 'renderSizeByWidth'
-
-export const PDF_LOAD_SUCCESS = 'PDF_LOAD_SUCCESS'

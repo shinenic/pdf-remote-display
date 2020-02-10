@@ -6,7 +6,7 @@ import classNames from 'classnames'
 import { pdfjs } from 'react-pdf'
 import { Document, Page } from 'react-pdf'
 
-import { RENDER_SIZE_BY_HEIGHT, RENDER_SIZE_BY_WIDTH, PDF_LOAD_SUCCESS } from '../constants'
+import { RENDER_SIZE_BY_HEIGHT, RENDER_SIZE_BY_WIDTH, SOCKET_EVENT } from '../constants'
 import { getViewport, getNowTime } from '../utils/base'
 import { getPdfjsWorkerSrc, api } from '../config'
 import HomeImg from "../img/home.svg"
@@ -39,19 +39,33 @@ class Viewer extends Component {
   }
 
   initWebSocketActions(ws) {
-    ws.on('getLatestFileIndex', (index, timeStamp) => {
-      if (timeStamp + LOCAL_STORAGE_TIMEOUT > getNowTime()) {
-        this.setFileUrl(index)
-      }
-    })
-    ws.on('getPDFFile', res => {
-      this.setFileUrl(res)
-    })
+    // ws.on('getLatestFileIndex', (index, timeStamp) => {
+    //   if (timeStamp + LOCAL_STORAGE_TIMEOUT > getNowTime()) {
+    //     this.setFileUrl(index)
+    //   }
+    // })
+    // ws.on('getPDFFile', res => {
+    //   this.setFileUrl(res)
+    // })
+    // ws.on('connect', () => {
+    //   this.setState({ isConnected: !!ws.connected })
+    // })
+    // // Get latest file index while App start
+    // ws.emit('getLatestFileIndex')
+
+    const { FILE_INDEX } = SOCKET_EVENT
+
     ws.on('connect', () => {
       this.setState({ isConnected: !!ws.connected })
     })
+    ws.on('fileIndex', file => {
+      if (file.timeStamp + LOCAL_STORAGE_TIMEOUT > getNowTime()) {
+        this.setFileUrl(file.index)
+      }
+    })
+
     // Get latest file index while App start
-    ws.emit('getLatestFileIndex')
+    ws.emit('fileIndex', { action: FILE_INDEX.GET_FILE })
   }
 
   setFileUrl(index) {
@@ -60,8 +74,9 @@ class Viewer extends Component {
 
   handleDocumentLoadSuccess(pdf) {
     const { ws } = this.state
+    const { VIEWER_STATUA } = SOCKET_EVENT
     this.setState({ pageCount: pdf.numPages })
-    ws.emit('fileLoad', PDF_LOAD_SUCCESS)
+    ws.emit('viewerStatus', VIEWER_STATUA.PDF_LOAD_SUCCESS)
   }
 
   handleRenderSuccess() {
@@ -146,7 +161,7 @@ class Viewer extends Component {
             renderAnnotationLayer={false}
             renderTextLayer={false} />
         </Document>
-        
+
         <div className="to-home-container">
           <Link to="/">
             <img

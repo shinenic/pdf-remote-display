@@ -25,7 +25,7 @@ const Result = ({
             locatedFolder={locatedFolder}
             selected={pdfIndex === selectedIndex}
             isPDFLoadSuccess={isPDFLoadSuccess}
-            sendFileIndex={index => sendFileIndex(index)} />
+            sendFileIndex={() => sendFileIndex(pdfIndex)} />
         )
       case SEARCH_MODE_TYPE.SONG_LIST:
         const [title, artist, volume, page] = data

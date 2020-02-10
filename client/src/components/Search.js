@@ -9,7 +9,11 @@ import NoResultHint from './NoResultHint'
 import matchSorter from 'match-sorter'
 import { api } from '../config/index'
 
-import { SEARCH_MODE_TYPE, SEARCH_RESULT_TYPE, PDF_LOAD_SUCCESS } from '../constants/index'
+import {
+  SEARCH_MODE_TYPE,
+  SEARCH_RESULT_TYPE,
+  SOCKET_EVENT
+} from '../constants/index'
 import songListData from '../data/songSearch'
 import { clearAllBlank, isZhuyin, getUrlPath, getUrlQueryParams, getUrlWithMergedParams } from '../utils/base'
 
@@ -81,20 +85,33 @@ class Search extends Component {
   connectWebSocket() {
     this.setState({ ws: webSocket(api.webSocket) }, () => {
       const { ws } = this.state
+      // ws.on('connect', () => {
+      //   this.setState({ isConnectedSocket: !!ws.connected })
+      // })
+      // ws.on('fileLoad', message => {
+      //   this.setState({ isPDFLoadSuccess: message === PDF_LOAD_SUCCESS })
+      // })
+      // ws.on('getPDFFile', index => {
+      //   this.setState({ selectedIndex: index, isPDFLoadSuccess: false })
+      // })
+
+      const { VIEWER_STATUA } = SOCKET_EVENT
       ws.on('connect', () => {
         this.setState({ isConnectedSocket: !!ws.connected })
       })
-      ws.on('fileLoad', message => {
-        this.setState({ isPDFLoadSuccess: message === PDF_LOAD_SUCCESS })
+      ws.on('viewerStatus', status => { // 改在viewer stauts 實現
+        this.setState({ isPDFLoadSuccess: status === VIEWER_STATUA.PDF_LOAD_SUCCESS })
       })
-      ws.on('getPDFFile', index => {
-        this.setState({ selectedIndex: index, isPDFLoadSuccess: false })
+      ws.on('fileIndex', file => {
+        this.setState({ selectedIndex: file.index, isPDFLoadSuccess: false })
       })
     })
   }
 
   sendFileIndex(index) {
-    this.state.ws.emit('getPDFFile', index)
+    const { FILE_INDEX } = SOCKET_EVENT
+    this.state.ws.emit('fileIndex', { action: FILE_INDEX.SET_FILE_INDEX, index })
+    // this.state.ws.emit('getPDFFile', index)
   }
 
   // TODO: When scroll down to specific position, it will show a icon and auto scroll to top after clicked
@@ -116,11 +133,10 @@ class Search extends Component {
 
   search(str) {
     const content = clearAllBlank(str)
-    const { data, searchMode } = this.state
+    const { data } = this.state
     // If the input(removed all blank) is not empty and the last character is not Zhuyin
     if (!isZhuyin(content.slice(-1)) && content !== '') {
-      const result = matchSorter(data, content
-        , searchMode === SEARCH_MODE_TYPE.FILE_LIST ? { keys: ['name', 'locatedFolder'] } : {})
+      const result = matchSorter(data, content)
       this.setState({
         result,
         isCleaned: false,

@@ -21,6 +21,16 @@ exports.omitKeyInArray = (arr, key) => {
   return newArr
 }
 
+exports.getFileListForClient = arr => {
+  return arr.map(obj => {
+    const data = []
+    obj.hasOwnProperty('index') && data.push(obj['index'])
+    obj.hasOwnProperty('name') && data.push(obj['name'])
+    obj.hasOwnProperty('locatedFolder') && data.push(obj['locatedFolder'])
+    return data
+  })
+}
+
 exports.dateFormat = (num, fmt) => {
   let date = new Date(parseInt(num))
   let o = {
@@ -40,7 +50,7 @@ exports.dateFormat = (num, fmt) => {
 
 exports.isLocalMode = () => {
   // ['LOCAL', 'PRODUCTION']
-  if(process.env.NODE_API_MODE) {
+  if (process.env.NODE_API_MODE) {
     return process.env.NODE_API_MODE === 'LOCAL'
   } else {
     return true

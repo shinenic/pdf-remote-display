@@ -3,15 +3,15 @@ import classNames from 'classnames'
 import DoubleTap from '../common/doubleTap'
 
 const FileListResult = ({
-  fileName, locatedFolder, index,
+  fileName,
+  locatedFolder,
   sendFileIndex,
   selected,
   isPDFLoadSuccess
 }) => {
 
   const getYTSearchKeywork = fileName => {
-    const strWithoutBlank = fileName.replace(/\s/g, '')
-    const strWithoutPage = strWithoutBlank.replace(/(\(.+\))/g, '')
+    const strWithoutPage = fileName.replace(/(\(.+\))/g, '')
     return strWithoutPage.split(/-|_/g).join(' ')
   }
 
@@ -32,11 +32,11 @@ const FileListResult = ({
       <DoubleTap
         className={'column-fileName'}
         content={fileName}
-        doubleTapEvent={() => connectToYoutube()} />
+        doubleTapEvent={connectToYoutube} />
       <DoubleTap
         className={'column-fileFolder'}
         content={locatedFolder}
-        doubleTapEvent={() => sendFileIndex(index)} />
+        doubleTapEvent={sendFileIndex} />
     </div>
   )
 }

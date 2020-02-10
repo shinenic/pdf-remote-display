@@ -7,30 +7,32 @@ const cors = require('cors')
 const fs = require('fs')
 const socket = require('socket.io')
 
-const { omitKeyInArray, isLocalMode, getNowTime, convertObjToPureArr } = require('./utils/base')
+const { isLocalMode, getNowTime, getFileListForClient } = require('./utils/base')
 const getFileList = require('./src/getFileList')
+const { SOCKET_EVENT } = require('./constants/index')
 
 const PORT = 5005
 let nodeAPIMode
+let latestFile = { index: -1, timeStamp: 0 }
 let latestFileIndex = -1
 let latestFileIndexTimeStamp = 0
 
 // Init File list data
 const directoryPath = path.join(__dirname, '/pdfs/')
 let fileList = getFileList(directoryPath)
-let fileListWithoutPath = omitKeyInArray(fileList, 'path')
-let fileListForClient = fileList.omitKeyInArray
+let fileListForClient = getFileListForClient(fileList)
 
 
 // LOG
 app.use(logfmt.requestLogger())
 
-if(isLocalMode()){
+// API ROUTE
+if (isLocalMode()) {
   app.use(cors())
-  nodeAPIMode = 'LOCAL' 
+  nodeAPIMode = 'LOCAL'
 } else {
   app.use('/api', require('./router/db'))
-  nodeAPIMode = 'PRODUCTION' 
+  nodeAPIMode = 'PRODUCTION'
 }
 
 app.get('/api/pdffile', (req, res) => {
@@ -42,20 +44,20 @@ app.get('/api/pdffile', (req, res) => {
 
 app.get('/api/reloadfilelist', (req, res) => {
   fileList = getFileList(directoryPath)
-  fileListWithoutPath = omitKeyInArray(fileList, 'path')
+  fileListForClient = getFileListForClient(fileList)
   res.json({ message: 'File list update successed.' })
 })
 
 app.get('/api/filelist', (req, res) => {
-  res.json(fileListWithoutPath)
+  res.json(fileListForClient)
 })
 
 
-// API ROUTER
+// VIEW ROUTE
 const reactUrlPath = ['/', '/viewer', '/filelist', '/songlist']
 app.use(express.static(path.join(__dirname, '/client/build')))
 app.get(reactUrlPath, (req, res) => {
-  res.sendFile(path.join(__dirname+'/client/build/index.html'))
+  res.sendFile(path.join(__dirname + '/client/build/index.html'))
 })
 
 app.use(express.json())
@@ -65,31 +67,52 @@ const server = http.Server(app).listen(port, () => {
   console.log(`Listening on port ${port}, "${nodeAPIMode}" mode`)
 })
 
+// Socket
 const io = socket(server)
 
 io.on('connection', socket => {
-  socket.on('getLatestFileIndex', () => {
-    socket.emit('getLatestFileIndex', latestFileIndex, latestFileIndexTimeStamp)
-  })
-  socket.on('getPDFFile', fileIndex => {
-    // TODO: make it as a obj
-    latestFileIndex = fileIndex
-    latestFileIndexTimeStamp = getNowTime()
-    io.sockets.emit('getPDFFile', fileIndex)
-  })
-  socket.on('fileLoad', message => {
-    socket.broadcast.emit('fileLoad', message)
-  })
+  // socket.on('getLatestFileIndex', () => {
+  //   socket.emit('getLatestFileIndex', latestFileIndex, latestFileIndexTimeStamp)
+  // })
+  // socket.on('getPDFFile', fileIndex => {
+  //   // TODO: make it as a obj
+  //   latestFileIndex = fileIndex
+  //   latestFileIndexTimeStamp = getNowTime()
+  //   io.sockets.emit('getPDFFile', fileIndex)
+  // })
+  // socket.on('fileLoad', message => {
+  //   socket.broadcast.emit('fileLoad', message)
+  // })
 
   // Refactor custom socket event
   socket.on('viewerStatus', status => {
-    // PDF_LOAD_SUCCESS
-    // PDF_LOAD_FAIL
-    // VIEWER_IDLE
+    // status = status
+    // PDF_LOAD_SUCCESS, PDF_LOAD_FAIL, VIEWER_IDLE
+    const { VIEWER_STATUA } = SOCKET_EVENT
+    switch (status) {
+      case VIEWER_STATUA.PDF_LOAD_SUCCESS:
+        socket.broadcast.emit('viewerStatus', VIEWER_STATUA.PDF_LOAD_SUCCESS)
+        break
+    }
   })
-  socket.on('fileIndex', status => {
-    // setIndex
-    // getFile
-    // getLatestFile
+  socket.on('fileIndex', message => {
+    // message = { action, index }
+    const { FILE_INDEX } = SOCKET_EVENT
+    switch (message.action) {
+      case FILE_INDEX.SET_FILE_INDEX:
+        Object.assign(
+          latestFile,
+          { index: message.index, timeStamp: getNowTime() }
+        )
+        console.log(latestFile)
+        io.sockets.emit('fileIndex', latestFile)
+        break
+      case FILE_INDEX.GET_FILE:
+        io.sockets.emit('fileIndex', latestFile)
+        break
+      default:
+        console.log(latestFile)
+        break
+    }
   })
 })
