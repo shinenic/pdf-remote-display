@@ -7,7 +7,7 @@ const cors = require('cors')
 const fs = require('fs')
 const socket = require('socket.io')
 
-const { omitKeyInArray, isLocalMode, getNowTime } = require('./utils/base')
+const { omitKeyInArray, isLocalMode, getNowTime, convertObjToPureArr } = require('./utils/base')
 const getFileList = require('./src/getFileList')
 
 const PORT = 5005
@@ -19,6 +19,7 @@ let latestFileIndexTimeStamp = 0
 const directoryPath = path.join(__dirname, '/pdfs/')
 let fileList = getFileList(directoryPath)
 let fileListWithoutPath = omitKeyInArray(fileList, 'path')
+let fileListForClient = fileList.omitKeyInArray
 
 
 // LOG
@@ -78,5 +79,17 @@ io.on('connection', socket => {
   })
   socket.on('fileLoad', message => {
     socket.broadcast.emit('fileLoad', message)
+  })
+
+  // Refactor custom socket event
+  socket.on('viewerStatus', status => {
+    // PDF_LOAD_SUCCESS
+    // PDF_LOAD_FAIL
+    // VIEWER_IDLE
+  })
+  socket.on('fileIndex', status => {
+    // setIndex
+    // getFile
+    // getLatestFile
   })
 })
