@@ -8,6 +8,8 @@
 
 > For Linux, macOS
 > cd client && npm build && cd .. && pm2 start pm2.config.js --name PdfViewer
+> or set env in cmd: env NODE_API_MODE=PRODUCTION npm run start
+> or use custom script: npm run dev
 
 > For Windows
 > cd client && npm build && cd .. && set "NODE_API_MODE=PRODUCTION" npm run start

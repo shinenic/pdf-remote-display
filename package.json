@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app",
+    "prod": "env NODE_API_MODE=PRODUCTION npm run start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Tim Wei 1995",

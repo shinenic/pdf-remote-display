@@ -18,7 +18,7 @@ MongoClient.connect(DB_URL, (err, client) => {
   if (err) {
     console.log("Connect fail.")
   }
-  console.log("Connected successfully to server")
+  console.log("Connected successfully to mongoDB")
   db = client.db(DB_NAME)
 })
 
@@ -51,14 +51,12 @@ router.get('/pdf/part', (req, res) => {
 
 // POST ONE HISTORY
 router.post('/:collectionName', (req, res) => {
-  // let { date, content } = req.body
   const { content } = req.body
   const date = Date.now().toString()
   if (content === undefined) {
     res.send('"content" format error.')
   }
   else {
-    // if (date === undefined) date = Date.now().toString()
     db.collection(COLLECTION_NAME).insertOne({ date, content }, (err) => {
       if (err) return res.send('Insert failed.')
       console.log("Insert success")
