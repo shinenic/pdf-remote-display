@@ -27,7 +27,7 @@ router.get('/', (req, res) => {
 })
 
 // GET ALL RESULT FROM COLLECTION
-router.get('/pdf/all', (req, res) => {
+router.get(`/${COLLECTION_NAME}/all`, (req, res) => {
   db.collection(COLLECTION_NAME).find().sort(SORT_METHOD).toArray((err, data) => {
     if (err) return res.send('get failed.')
     res.send({ data })
@@ -35,7 +35,7 @@ router.get('/pdf/all', (req, res) => {
 })
 
 // GET PART RESULT FROM COLLECTION AND FORMAT THEM
-router.get('/pdf/part', (req, res) => {
+router.get(`/${COLLECTION_NAME}/part`, (req, res) => {
   db.collection(COLLECTION_NAME).find().sort(SORT_METHOD).limit(PART_DATA_COUNT).toArray((err, result) => {
     if (err) return res.send('get failed.')
     const data = result.reduce((acc, value) => {
@@ -50,7 +50,7 @@ router.get('/pdf/part', (req, res) => {
 })
 
 // POST ONE HISTORY
-router.post('/:collectionName', (req, res) => {
+router.post(`/${COLLECTION_NAME}`, (req, res) => {
   const { content } = req.body
   const date = Date.now().toString()
   if (content === undefined) {
@@ -66,7 +66,7 @@ router.post('/:collectionName', (req, res) => {
 })
 
 // DELETE ONE HISTORY
-router.delete('/:collectionName/:id', (req, res) => {
+router.delete(`/${COLLECTION_NAME}/:id`, (req, res) => {
   if (req.params.id === undefined) {
     res.send('id format error.')
   } else {

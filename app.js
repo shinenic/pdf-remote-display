@@ -25,6 +25,9 @@ let fileListForClient = getFileListForClient(fileList)
 // LOG
 app.use(logfmt.requestLogger())
 
+// Enable Parse json body
+app.use(express.json())
+
 // API ROUTE
 if (isLocalMode()) {
   app.use(cors())
@@ -58,8 +61,6 @@ app.use(express.static(path.join(__dirname, '/client/build')))
 app.get(reactUrlPath, (req, res) => {
   res.sendFile(path.join(__dirname + '/client/build/index.html'))
 })
-
-app.use(express.json())
 
 const port = Number(process.env.PORT || PORT)
 const server = http.Server(app).listen(port, () => {
