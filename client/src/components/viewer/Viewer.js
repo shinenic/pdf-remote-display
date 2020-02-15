@@ -38,13 +38,23 @@ class Viewer extends Component {
   }
 
   initWebSocketActions(ws) {
-    const { FILE_INDEX } = SOCKET_EVENT
+    const { FILE_INDEX, PAGE_ACTIONS } = SOCKET_EVENT
     ws.on('connect', () => {
       this.setState({ isConnected: !!ws.connected })
     })
     ws.on('fileIndex', file => {
       if (file.timeStamp + LOCAL_STORAGE_TIMEOUT > getNowTime()) {
         this.setFileUrl(file.index)
+      }
+    })
+    ws.on('pageActions', action => {
+      switch (action) {
+        case PAGE_ACTIONS.SET_NEXT_PAGE:
+          this.goNextPage()
+          break
+        case PAGE_ACTIONS.SET_PREV_PAGE:
+          this.goPrevPage()
+          break
       }
     })
     // Get latest file index while App start

@@ -72,10 +72,10 @@ const io = socket(server)
 
 io.on('connection', socket => {
   socket.on('viewerStatus', status => {
-    const { VIEWER_STATUA } = SOCKET_EVENT
+    const { VIEWER_STATUS } = SOCKET_EVENT
     switch (status) {
-      case VIEWER_STATUA.PDF_LOAD_SUCCESS:
-        socket.broadcast.emit('viewerStatus', VIEWER_STATUA.PDF_LOAD_SUCCESS)
+      case VIEWER_STATUS.PDF_LOAD_SUCCESS:
+        socket.broadcast.emit('viewerStatus', VIEWER_STATUS.PDF_LOAD_SUCCESS)
         break
     }
   })
@@ -88,11 +88,22 @@ io.on('connection', socket => {
           latestFile,
           { index: message.index, timeStamp: getNowTime() }
         )
-        console.log(latestFile)
         io.sockets.emit('fileIndex', latestFile)
         break
       case FILE_INDEX.GET_FILE:
         io.sockets.emit('fileIndex', latestFile)
+        break
+    }
+  })
+  socket.on('pageActions', action => {
+    const { PAGE_ACTIONS } = SOCKET_EVENT
+    console.log(action)
+    switch (action) {
+      case PAGE_ACTIONS.SET_NEXT_PAGE:
+        socket.broadcast.emit('pageActions', PAGE_ACTIONS.SET_NEXT_PAGE)
+        break
+      case PAGE_ACTIONS.SET_PREV_PAGE:
+        socket.broadcast.emit('pageActions', PAGE_ACTIONS.SET_PREV_PAGE)
         break
     }
   })

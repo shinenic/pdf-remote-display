@@ -49,3 +49,40 @@
     filter: invert(0.2);
   }
 }
+
+$pageCtrlHeight: 200px;
+
+.page-ctrl {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: $pageCtrlHeight;
+  background-color: rgba(black, $alpha: 0.7);
+  display: flex;
+
+  :nth-child(1), :nth-child(3) {
+    color: map-get($text-color, result);
+    flex: 1;
+    position: relative;
+
+    img {
+      max-width: 3.6rem;
+      filter: invert(1);
+      position: absolute;
+      top: calc(50% - 1.8rem);
+      left: calc(50% - 1.8rem);
+    }
+  }
+
+  :nth-child(3) > img {
+    transform: rotate(180deg);
+  }
+
+  :nth-child(2) {
+    border-radius: 5px;
+    width: 3px;
+    background-color: map-get($text-color, result);
+    margin: 20px 10px;
+  }
+}

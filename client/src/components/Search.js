@@ -6,6 +6,7 @@ import webSocket from 'socket.io-client'
 import TopCard from './TopCard'
 import Result from './result/Result'
 import NoResultHint from './NoResultHint'
+import PageCtrl from './common/PageCtrl'
 import matchSorter from 'match-sorter'
 import { api } from '../config/index'
 
@@ -47,7 +48,6 @@ class Search extends Component {
     this.setSearchInitState(searchMode, data, incognito, searchParam)
     this.connectWebSocket()
     window.addEventListener('scroll', () => this.handleScroll())
-
   }
 
   componentWillUnmount() {
@@ -101,6 +101,10 @@ class Search extends Component {
   sendFileIndex(index) {
     const { FILE_INDEX } = SOCKET_EVENT
     this.state.ws.emit('fileIndex', { action: FILE_INDEX.SET_FILE_INDEX, index })
+  }
+
+  sendPageAction(action) {
+    this.state.ws.emit('pageActions', action)
   }
 
   // TODO: When scroll down to specific position, it will show a icon and auto scroll to top after clicked
@@ -194,10 +198,15 @@ class Search extends Component {
       selectedIndex,
       isPDFLoadSuccess
     } = this.state
+    const { PAGE_ACTIONS } = SOCKET_EVENT
     const isNoResult = result.length === 0
 
     const placeHolderText = searchMode === SEARCH_MODE_TYPE.FILE_LIST
       ? 'Search for PDF file' : 'Title / Artist / Volume'
+
+    const shouldRenderPageCtrl
+      = isPDFLoadSuccess && result.length !== 0
+      && result.some(arr => arr[0] === selectedIndex) && inputText !== ''
 
     return (
       <div className="search-container">
@@ -221,6 +230,12 @@ class Search extends Component {
           sendFileIndex={index => this.sendFileIndex(index)}
           findArtist={str => this.findArtist(str)} />
         {isNoResult && <NoResultHint displayMode={this.getDisplayMode()} />}
+        {
+          shouldRenderPageCtrl &&
+          <PageCtrl
+            goNextPage={() => this.sendPageAction(PAGE_ACTIONS.SET_NEXT_PAGE)}
+            goPrevPage={() => this.sendPageAction(PAGE_ACTIONS.SET_PREV_PAGE)} />
+        }
       </div>
     )
   }
