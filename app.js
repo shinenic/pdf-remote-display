@@ -97,7 +97,6 @@ io.on('connection', socket => {
   })
   socket.on('pageActions', action => {
     const { PAGE_ACTIONS } = SOCKET_EVENT
-    console.log(action)
     switch (action) {
       case PAGE_ACTIONS.SET_NEXT_PAGE:
         socket.broadcast.emit('pageActions', PAGE_ACTIONS.SET_NEXT_PAGE)
