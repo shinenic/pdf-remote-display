@@ -24,19 +24,22 @@ const FileListResult = ({
     }
   }
 
-  const rowClassNames = classNames( 'row', 'row--file-list', 
-                                  { 'row--on-load': selected },
-                                  { 'row--loaded': isPDFLoadSuccess && selected })
+  const rowClassNames = classNames('row', 'row--file-list',
+    { 'row--on-load': selected },
+    { 'row--loaded': isPDFLoadSuccess && selected })
   return (
     <div className={rowClassNames}>
       <DoubleTap
         className={'column-fileName'}
         content={fileName}
         doubleTapEvent={connectToYoutube} />
-      <DoubleTap
+      {/* <DoubleTap
         className={'column-fileFolder'}
         content={locatedFolder}
-        doubleTapEvent={sendFileIndex} />
+        doubleTapEvent={sendFileIndex} /> */}
+      <div className={'column-fileFolder'} onClick={sendFileIndex}>
+        {locatedFolder}
+      </div>
     </div>
   )
 }
